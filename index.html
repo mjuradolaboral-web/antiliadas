@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AntiLiadas — Analiza antes de enviar</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #07090f;
+    --surface:   #0d1117;
+    --surface2:  #121a27;
+    --surface3:  #1a2236;
+    --border:    #1e2d45;
+    --border2:   #263652;
+    --accent:    #22c55e;
+    --accent-glow: rgba(34,197,94,0.15);
+    --red:    #f87171;
+    --yellow: #fbbf24;
+    --blue:   #60a5fa;
+    --purple: #a78bfa;
+    --text:   #e2e8f0;
+    --text2:  #94a3b8;
+    --muted:  #475569;
+    --radius: 14px;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 16px 100px;
+  }
+
+  /* ── Header ─────────────────────────────────── */
+  header { text-align: center; margin-bottom: 40px; }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .logo-icon {
+    width: 46px; height: 46px;
+    background: linear-gradient(135deg, #22c55e, #15803d);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 0 24px rgba(34,197,94,0.35);
+  }
+  .logo h1 {
+    font-size: 28px; font-weight: 800; letter-spacing: -1px;
+    background: linear-gradient(90deg, #f0f4f8, #94a3b8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .tagline { color: var(--text2); font-size: 15px; line-height: 1.5; }
+
+  .social-proof {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(34,197,94,0.08);
+    border: 1px solid rgba(34,197,94,0.18);
+    border-radius: 99px;
+    padding: 5px 13px;
+    font-size: 12px;
+    color: var(--accent);
+    margin-top: 14px;
+    font-weight: 500;
+  }
+  .live-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.5; transform: scale(0.75); }
+  }
+
+  /* ── Input Card ─────────────────────────────── */
+  .card {
+    width: 100%; max-width: 660px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-shadow: 0 8px 60px rgba(0,0,0,0.5);
+  }
+  .input-label {
+    font-size: 11px; font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 15px;
+    font-family: inherit;
+    padding: 14px 16px;
+    resize: vertical;
+    min-height: 110px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    line-height: 1.7;
+  }
+  textarea:focus {
+    border-color: rgba(34,197,94,0.45);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  textarea::placeholder { color: var(--muted); }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    gap: 12px;
+  }
+
+  /* Usage counter */
+  .uses-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text2);
+    flex-shrink: 0;
+  }
+  .uses-dots { display: flex; gap: 5px; }
+  .dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--accent);
+    transition: background 0.3s, transform 0.25s;
+  }
+  .dot.used { background: var(--border2); transform: scale(0.8); }
+
+  /* Analyze button */
+  .btn {
+    padding: 12px 22px;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: #000;
+    font-weight: 700;
+    font-size: 15px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 0 18px rgba(34,197,94,0.25);
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .btn:not(:disabled):hover {
+    opacity: 0.9;
+    box-shadow: 0 0 30px rgba(34,197,94,0.45);
+    transform: translateY(-1px);
+  }
+  .btn:active  { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* ── History ─────────────────────────────────── */
+  .history-section {
+    width: 100%; max-width: 660px;
+    margin-top: 14px;
+    display: none;
+  }
+  .history-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 0;
+    transition: color 0.15s;
+    font-family: inherit;
+  }
+  .history-toggle:hover { color: var(--text2); }
+  .h-arrow { transition: transform 0.2s; display: inline-block; font-size: 9px; }
+  .history-toggle.open .h-arrow { transform: rotate(90deg); }
+
+  .history-list {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .history-list.open { display: flex; }
+
+  .history-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    animation: fadeUp 0.25s ease both;
+  }
+  .history-item:hover { border-color: var(--border2); background: var(--surface2); }
+
+  .h-risk-badge {
+    flex-shrink: 0;
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800;
+  }
+  .h-content { flex: 1; min-width: 0; }
+  .h-msg {
+    font-size: 13px; color: var(--text);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .h-date { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .h-chevron { color: var(--muted); font-size: 14px; flex-shrink: 0; }
+
+  /* ── Loader ──────────────────────────────────── */
+  .loader {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: 44px;
+    color: var(--text2);
+    font-size: 14px;
+  }
+  .loader.visible { display: flex; }
+  .spinner {
+    width: 38px; height: 38px;
+    border: 3px solid var(--border2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-dots span {
+    display: inline-block;
+    animation: dotBounce 1.3s ease-in-out infinite;
+    margin: 0 1px;
+  }
+  .loading-dots span:nth-child(2) { animation-delay: 0.18s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.36s; }
+  @keyframes dotBounce {
+    0%,80%,100% { opacity: 0.25; transform: translateY(0); }
+    40%          { opacity: 1;    transform: translateY(-4px); }
+  }
+
+  /* ── Microcopy ───────────────────────────────── */
+  .microcopy {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 11px 15px;
+    border-radius: 10px;
+    line-height: 1.4;
+  }
+  .microcopy.danger  { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.2); color: var(--red); }
+  .microcopy.warning { background: rgba(251,191,36,0.09); border: 1px solid rgba(251,191,36,0.2); color: var(--yellow); }
+  .microcopy.safe    { background: rgba(34,197,94,0.09);  border: 1px solid rgba(34,197,94,0.2);  color: var(--accent); }
+
+  /* ── Results ─────────────────────────────────── */
+  .results {
+    width: 100%; max-width: 660px;
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    opacity: 0;
+    animation: fadeUp 0.35s ease forwards;
+  }
+  .block:nth-child(2) { animation-delay: 0.07s; }
+  .block:nth-child(3) { animation-delay: 0.14s; }
+  .block:nth-child(4) { animation-delay: 0.21s; }
+  .block:nth-child(5) { animation-delay: 0.28s; }
+  .block:nth-child(6) { animation-delay: 0.35s; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .block-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .block-body {
+    font-size: 14.5px;
+    line-height: 1.75;
+    color: #c4cfde;
+  }
+  .block-body ul { padding-left: 18px; }
+  .block-body li { margin-bottom: 5px; }
+
+  /* Risk */
+  .risk-block { border-left: 3px solid var(--red); }
+  .risk-block .block-header { color: var(--red); }
+  .risk-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    gap: 12px;
+  }
+  .risk-score {
+    font-size: 52px; font-weight: 900;
+    line-height: 1; letter-spacing: -3px;
+    flex-shrink: 0;
+  }
+  .risk-descriptor {
+    font-size: 13px; color: var(--text2);
+    text-align: right; line-height: 1.5;
+    padding-bottom: 3px;
+  }
+  .meter-track {
+    background: var(--surface2);
+    border-radius: 99px;
+    height: 6px;
+    overflow: hidden;
+  }
+  .meter-fill {
+    height: 100%; border-radius: 99px;
+    width: 0;
+    transition: width 1s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* Issues */
+  .issues-block { border-left: 3px solid var(--yellow); }
+  .issues-block .block-header { color: var(--yellow); }
+
+  /* Interpretation */
+  .interp-block { border-left: 3px solid var(--blue); }
+  .interp-block .block-header { color: var(--blue); }
+
+  /* Versions */
+  .versions-block { border-left: 3px solid var(--purple); }
+  .versions-block .block-header { color: var(--purple); }
+
+  .version-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 50px 14px 16px;
+    margin-bottom: 8px;
+    position: relative;
+    transition: border-color 0.15s;
+  }
+  .version-item:last-child { margin-bottom: 0; }
+  .version-item:hover { border-color: var(--border2); }
+  .version-tag {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    color: var(--purple);
+  }
+  .version-text {
+    font-size: 14px; line-height: 1.65;
+    color: #e8edf4;
+    font-style: italic;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 12px; right: 12px;
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text2);
+    font-size: 11px; font-weight: 600;
+    padding: 4px 9px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .copy-btn:hover { background: var(--border2); color: var(--text); }
+  .copy-btn.copied {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(34,197,94,0.08);
+  }
+
+  /* Saved badge */
+  .saved-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-size: 12px; font-weight: 600;
+    color: var(--accent);
+    padding: 10px;
+    opacity: 0;
+    animation: fadeUp 0.3s ease 0.45s forwards;
+  }
+
+  /* Error block */
+  .error-block {
+    background: var(--surface);
+    border: 1px solid rgba(248,113,113,0.25);
+    border-left: 3px solid var(--red);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+  }
+  .error-block .block-header { color: var(--red); }
+
+  /* ── Paywall ─────────────────────────────────── */
+  .paywall-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(7,9,15,0.88);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .paywall-overlay.visible { display: flex; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .paywall-card {
+    width: 100%; max-width: 460px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    padding: 36px 30px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+    text-align: center;
+    animation: slideUp 0.38s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(32px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .paywall-icon { font-size: 46px; display: block; margin-bottom: 16px; }
+  .paywall-title {
+    font-size: 22px; font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+  }
+  .paywall-sub {
+    font-size: 15px; color: var(--text2);
+    line-height: 1.65; margin-bottom: 26px;
+  }
+  .paywall-benefits {
+    list-style: none;
+    text-align: left;
+    margin-bottom: 28px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .paywall-benefits li {
+    display: flex; align-items: center;
+    gap: 10px;
+    font-size: 14px; color: var(--text2);
+  }
+  .paywall-benefits li::before {
+    content: "✓";
+    flex-shrink: 0;
+    width: 22px; height: 22px;
+    background: rgba(34,197,94,0.1);
+    border: 1px solid rgba(34,197,94,0.28);
+    border-radius: 6px;
+    color: var(--accent);
+    font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .paywall-price {
+    font-size: 12px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+  .paywall-price strong {
+    font-size: 24px; font-weight: 800;
+    color: var(--text); letter-spacing: -0.5px;
+  }
+  .btn-pro {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: #000;
+    font-weight: 800; font-size: 16px;
+    border: none; border-radius: 12px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 0 28px rgba(34,197,94,0.35);
+    margin-bottom: 10px;
+    font-family: inherit;
+  }
+  .btn-pro:hover { opacity: 0.9; box-shadow: 0 0 40px rgba(34,197,94,0.5); transform: translateY(-1px); }
+  .btn-pro:active { transform: scale(0.98); }
+
+  .paywall-share {
+    font-size: 13px; color: var(--muted);
+    cursor: pointer; padding: 8px;
+    transition: color 0.15s;
+    border: none; background: none;
+    font-family: inherit;
+    display: block; width: 100%; text-align: center;
+  }
+  .paywall-share:hover { color: var(--text2); }
+
+  /* ── Toast ───────────────────────────────────── */
+  .toast-wrap {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    pointer-events: none;
+    display: flex; flex-direction: column; gap: 8px; align-items: center;
+  }
+  .toast {
+    background: var(--surface3);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-size: 13px; font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    animation: toastIn 0.25s ease, toastOut 0.3s ease 2.2s forwards;
+  }
+  @keyframes toastIn  { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-6px); } }
+</style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────── -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">🛡️</div>
+    <h1>AntiLiadas</h1>
+  </div>
+  <p class="tagline">Analiza tu mensaje antes de enviarlo. Evita conflictos innecesarios.</p>
+  <div class="social-proof">
+    <div class="live-dot"></div>
+    1.247 parejas han evitado discusiones esta semana
+  </div>
+</header>
+
+<!-- ── Input Card ─────────────────────────────── -->
+<div class="card">
+  <div class="input-label">Tu mensaje</div>
+  <textarea id="msg" rows="5"></textarea>
+  <div class="card-footer">
+    <div class="uses-badge">
+      <div class="uses-dots">
+        <div class="dot" id="d0"></div>
+        <div class="dot" id="d1"></div>
+        <div class="dot" id="d2"></div>
+      </div>
+      <span id="uses-text"></span>
+    </div>
+    <button class="btn" id="btn" disabled onclick="enviar()">Analizar →</button>
+  </div>
+</div>
+
+<!-- ── History ────────────────────────────────── -->
+<div class="history-section" id="history-section">
+  <button class="history-toggle" id="history-toggle" onclick="toggleHistory()">
+    <span class="h-arrow">▶</span>&nbsp;
+    Análisis anteriores (<span id="history-count">0</span>)
+  </button>
+  <div class="history-list" id="history-list"></div>
+</div>
+
+<!-- ── Loader ─────────────────────────────────── -->
+<div class="loader" id="loader">
+  <div class="spinner"></div>
+  <div class="loading-dots">
+    Analizando<span>.</span><span>.</span><span>.</span>
+  </div>
+</div>
+
+<!-- ── Results ────────────────────────────────── -->
+<div class="results" id="results"></div>
+
+<!-- ── Paywall ────────────────────────────────── -->
+<div class="paywall-overlay" id="paywall">
+  <div class="paywall-card">
+    <span class="paywall-icon">🔐</span>
+    <div class="paywall-title">Ibas a arruinar la noche</div>
+    <p class="paywall-sub">
+      Has usado tus 3 análisis gratuitos.<br>
+      Sin AntiLiadas, cada mensaje vuelve a ser una apuesta.
+    </p>
+    <ul class="paywall-benefits">
+      <li>Análisis ilimitados, en cualquier momento</li>
+      <li>Modo "urgente" para respuestas en caliente</li>
+      <li>Historial completo de mensajes analizados</li>
+      <li>Modo pareja: analiza los mensajes que recibes</li>
+    </ul>
+    <div class="paywall-price">Acceso completo por solo <strong>€4.99</strong> / mes</div>
+    <button class="btn-pro" onclick="simularPago()">Desbloquear Pro →</button>
+    <button class="paywall-share" onclick="simularCompartir()">
+      🔗 Comparte con 2 amigos para ganar 3 análisis gratis
+    </button>
+  </div>
+</div>
+
+<!-- ── Toasts ─────────────────────────────────── -->
+<div class="toast-wrap" id="toasts"></div>
+
+<script>
+// ── State ──────────────────────────────────────
+const MAX = 3;
+let usos = parseInt(localStorage.getItem('al_usos') || '0');
+let history = [];
+try { history = JSON.parse(localStorage.getItem('al_history') || '[]'); } catch {}
+
+const PLACEHOLDERS = [
+  "Ej: Siempre haces lo mismo, nunca me escuchas...",
+  "Ej: ¿Por qué no me avisaste antes? Ya me cansé",
+  "Ej: No entiendo cómo puedes ser tan irresponsable",
+  "Ej: Si tanto te molesta estar conmigo, dímelo ya",
+  "Ej: Últimamente te noto muy raro, ¿hay algo que no me cuentes?"
+];
+
+// ── Init ───────────────────────────────────────
+(function init() {
+  const ta = document.getElementById('msg');
+  ta.placeholder = PLACEHOLDERS[Math.floor(Math.random() * PLACEHOLDERS.length)];
+  ta.addEventListener('input', () => {
+    document.getElementById('btn').disabled = ta.value.trim().length === 0;
+  });
+  updateCounter();
+  renderHistory();
+})();
+
+// ── Counter ────────────────────────────────────
+function updateCounter() {
+  const left = Math.max(0, MAX - usos);
+  const textEl = document.getElementById('uses-text');
+
+  if (left === 0) {
+    textEl.innerHTML = '<span style="color:var(--red)">Sin análisis disponibles</span>';
+  } else if (left === 1) {
+    textEl.innerHTML = '<span style="color:var(--yellow)">Te queda <strong>1 análisis gratis</strong></span>';
+  } else {
+    textEl.textContent = `Te quedan ${left} análisis gratis`;
+  }
+
+  for (let i = 0; i < 3; i++) {
+    const dot = document.getElementById('d' + i);
+    if (dot) dot.classList.toggle('used', i >= left);
+  }
+}
+
+// ── Analyze ────────────────────────────────────
+async function enviar() {
+  if (usos >= MAX) { showPaywall(); return; }
+
+  const btn      = document.getElementById('btn');
+  const loader   = document.getElementById('loader');
+  const resultsEl = document.getElementById('results');
+  const mensaje  = document.getElementById('msg').value.trim();
+
+  if (!mensaje) return;
+
+  usos++;
+  localStorage.setItem('al_usos', String(usos));
+  updateCounter();
+
+  btn.disabled = true;
+  resultsEl.innerHTML = '';
+  loader.classList.add('visible');
+  loader.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  try {
+    const res  = await fetch('http://localhost:3000/analizar', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ mensaje })
+    });
+    const data = await res.json();
+    loader.classList.remove('visible');
+
+    if (data.error) {
+      resultsEl.innerHTML = buildErrorBlock(data.error);
+    } else {
+      const parsed = parseResult(data.resultado);
+      saveToHistory(mensaje, parsed, data.resultado);
+      resultsEl.innerHTML = buildResults(parsed);
+      setTimeout(() => animateMeter(parsed.risk), 80);
+      resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      toast('✓ Análisis guardado en tu historial');
+      if (usos >= MAX) setTimeout(showPaywall, 3000);
+    }
+
+  } catch {
+    loader.classList.remove('visible');
+    resultsEl.innerHTML = buildErrorBlock(
+      'No se pudo conectar con el servidor. ¿Está corriendo el backend en localhost:3000?'
+    );
+  } finally {
+    btn.disabled = document.getElementById('msg').value.trim().length === 0;
+  }
+}
+
+// ── Parser ─────────────────────────────────────
+function parseResult(text) {
+  const riskMatch  = text.match(/Riesgo de conflicto[:\s]+(\d+)/i);
+  const issuesMatch = text.match(/Problemas detectados[:\s]*([\s\S]*?)(?=💥|✔️|$)/i);
+  const interpMatch = text.match(/Cómo lo puede interpretar[^:]*[:\s]*([\s\S]*?)(?=✔️|$)/i);
+  const asertMatch  = text.match(/Versión asertiva[:\s]*"([^"]+)"/i);
+  const concilMatch = text.match(/Versión conciliadora[:\s]*"([^"]+)"/i);
+  const vulnerMatch = text.match(/Versión vulnerable[:\s]*"([^"]+)"/i);
+
+  return {
+    risk:    riskMatch  ? parseInt(riskMatch[1]) : null,
+    issues:  issuesMatch ? issuesMatch[1].trim() : null,
+    interp:  interpMatch ? interpMatch[1].trim() : null,
+    raw:     text,
+    versions: [
+      asertMatch  ? { tag: 'Asertiva',     text: asertMatch[1]  } : null,
+      concilMatch ? { tag: 'Conciliadora', text: concilMatch[1] } : null,
+      vulnerMatch ? { tag: 'Vulnerable',   text: vulnerMatch[1] } : null,
+    ].filter(Boolean)
+  };
+}
+
+// ── Builder ────────────────────────────────────
+function buildResults(p) {
+  let html = '';
+
+  // Microcopy
+  if (p.risk !== null) {
+    const mc = getMicrocopy(p.risk);
+    html += `<div class="microcopy ${mc.cls}">${mc.text}</div>`;
+  }
+
+  // Risk meter
+  if (p.risk !== null) {
+    const color = riskColor(p.risk);
+    html += `
+      <div class="block risk-block">
+        <div class="block-header">🔴 Riesgo de conflicto</div>
+        <div class="risk-row">
+          <div class="risk-score" style="color:${color}">${p.risk}%</div>
+          <div class="risk-descriptor">${riskDescriptor(p.risk)}</div>
+        </div>
+        <div class="meter-track">
+          <div class="meter-fill" id="meter" style="width:0;background:${color}"></div>
+        </div>
+      </div>`;
+  }
+
+  // Issues
+  if (p.issues) {
+    html += `
+      <div class="block issues-block">
+        <div class="block-header">⚠️ Problemas detectados</div>
+        <div class="block-body">${toBullets(p.issues)}</div>
+      </div>`;
+  }
+
+  // Interpretation
+  if (p.interp) {
+    html += `
+      <div class="block interp-block">
+        <div class="block-header">💥 Así lo interpretará tu pareja</div>
+        <div class="block-body">${esc(p.interp).replace(/\n/g, '<br>')}</div>
+      </div>`;
+  }
+
+  // Versions
+  if (p.versions.length) {
+    const vHtml = p.versions.map(v => `
+      <div class="version-item">
+        <button class="copy-btn" data-text="${escAttr(v.text)}" onclick="copyVersion(this)">Copiar</button>
+        <div class="version-tag">✔️ ${v.tag}</div>
+        <div class="version-text">"${esc(v.text)}"</div>
+      </div>`).join('');
+
+    html += `
+      <div class="block versions-block">
+        <div class="block-header">💬 Versiones que funcionan mejor</div>
+        <div class="block-body">${vHtml}</div>
+      </div>`;
+  }
+
+  // Fallback when parser found nothing structured
+  if (!p.risk && !p.issues && !p.interp && !p.versions.length) {
+    html += `<div class="block"><div class="block-body">${esc(p.raw)}</div></div>`;
+  }
+
+  html += `<div class="saved-badge">✓ Te hemos ahorrado un conflicto</div>`;
+  return html;
+}
+
+function buildErrorBlock(msg) {
+  return `
+    <div class="error-block">
+      <div class="block-header">⚠️ Error</div>
+      <div class="block-body">${esc(msg)}</div>
+    </div>`;
+}
+
+function animateMeter(risk) {
+  const el = document.getElementById('meter');
+  if (el && risk != null) requestAnimationFrame(() => { el.style.width = risk + '%'; });
+}
+
+// ── Helpers ────────────────────────────────────
+function riskColor(n) {
+  if (n < 35) return '#22c55e';
+  if (n < 65) return '#fbbf24';
+  return '#f87171';
+}
+
+function riskDescriptor(n) {
+  if (n < 25) return 'Mensaje bastante seguro.<br>Puedes enviarlo con tranquilidad.';
+  if (n < 50) return 'Puede generar algo de fricción.<br>Una pequeña revisión ayuda.';
+  if (n < 75) return 'Probablemente cause conflicto.<br>Considera las versiones alternativas.';
+  return 'Riesgo muy alto de discusión.<br>No lo envíes sin revisar.';
+}
+
+function getMicrocopy(n) {
+  if (n >= 75) return { cls: 'danger',  text: '🔥 Esto probablemente habría acabado en discusión esta noche.' };
+  if (n >= 50) return { cls: 'warning', text: '⚡ Con un pequeño cambio, este mensaje cambia completamente de tono.' };
+  return             { cls: 'safe',    text: '✓ Este mensaje es bastante seguro. Siempre hay margen para mejorar.' };
+}
+
+function toBullets(raw) {
+  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  const items = lines.map(l => l.replace(/^[-–•*]\s*/, '')).filter(l => l.length > 2);
+  if (!items.length) return `<p>${esc(raw)}</p>`;
+  return '<ul>' + items.map(i => `<li>${esc(i)}</li>`).join('') + '</ul>';
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g,  '&amp;')
+    .replace(/</g,  '&lt;')
+    .replace(/>/g,  '&gt;')
+    .replace(/"/g,  '&quot;');
+}
+function escAttr(s) {
+  return String(s).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// ── Copy ───────────────────────────────────────
+async function copyVersion(btn) {
+  try {
+    await navigator.clipboard.writeText(btn.dataset.text);
+    btn.textContent = '✓ Copiado';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 2000);
+  } catch {
+    toast('No se pudo copiar automáticamente');
+  }
+}
+
+// ── History ────────────────────────────────────
+function saveToHistory(mensaje, parsed, raw) {
+  const entry = {
+    id:     Date.now(),
+    msg:    mensaje,
+    risk:   parsed.risk,
+    parsed: { ...parsed, raw },
+    ts:     new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+  };
+  history.unshift(entry);
+  if (history.length > 3) history = history.slice(0, 3);
+  try { localStorage.setItem('al_history', JSON.stringify(history)); } catch {}
+  renderHistory();
+}
+
+function renderHistory() {
+  const section  = document.getElementById('history-section');
+  const listEl   = document.getElementById('history-list');
+  const countEl  = document.getElementById('history-count');
+
+  if (!history.length) { section.style.display = 'none'; return; }
+
+  section.style.display = 'block';
+  countEl.textContent = history.length;
+
+  listEl.innerHTML = history.map((h, idx) => {
+    const color = riskColor(h.risk);
+    const risk  = h.risk != null ? h.risk + '%' : '?';
+    return `
+      <div class="history-item" data-idx="${idx}" style="animation-delay:${idx * 0.07}s">
+        <div class="h-risk-badge" style="background:${color}22;color:${color}">${risk}</div>
+        <div class="h-content">
+          <div class="h-msg">${esc(h.msg)}</div>
+          <div class="h-date">${h.ts}</div>
+        </div>
+        <div class="h-chevron">›</div>
+      </div>`;
+  }).join('');
+
+  listEl.querySelectorAll('.history-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const entry = history[parseInt(el.dataset.idx)];
+      if (!entry) return;
+      const resultsEl = document.getElementById('results');
+      resultsEl.innerHTML = buildResults(entry.parsed);
+      setTimeout(() => animateMeter(entry.parsed.risk), 80);
+      resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Close history list after selecting
+      document.getElementById('history-list').classList.remove('open');
+      document.getElementById('history-toggle').classList.remove('open');
+    });
+  });
+}
+
+function toggleHistory() {
+  document.getElementById('history-list').classList.toggle('open');
+  document.getElementById('history-toggle').classList.toggle('open');
+}
+
+// ── Paywall ────────────────────────────────────
+function showPaywall() {
+  document.getElementById('paywall').classList.add('visible');
+}
+
+function simularPago() {
+  document.getElementById('paywall').classList.remove('visible');
+  toast('🚀 Próximamente — ¡Gracias por tu interés en Pro!');
+}
+
+function simularCompartir() {
+  const url = window.location.href;
+  if (navigator.share) {
+    navigator.share({ title: 'AntiLiadas', text: 'Analiza tus mensajes antes de enviarlos 🛡️', url });
+  } else {
+    navigator.clipboard.writeText(url)
+      .then(() => toast('🔗 Enlace copiado — compártelo con tus amigos'))
+      .catch(() => toast('Copia este enlace: ' + url));
+  }
+}
+
+// ── Toast ──────────────────────────────────────
+function toast(msg) {
+  const wrap = document.getElementById('toasts');
+  const el   = document.createElement('div');
+  el.className   = 'toast';
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(() => el.remove(), 2600);
+}
+</script>
+</body>
+</html>
