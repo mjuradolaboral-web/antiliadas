@@ -5,7 +5,10 @@ require("dotenv").config();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: "https://antiliadas.vercel.app"
+}));
+
 app.use(express.json());
 
 const openai = new OpenAI({
@@ -24,13 +27,15 @@ app.post("/analizar", async (req, res) => {
 
     if (!mensaje || mensaje.trim().length < 3) {
       return res.status(400).json({
-        error: "Escribe un mensaje válido.",
+        ok: false,
+        error: "Escribe un mensaje un poco más largo para poder analizarlo bien.",
       });
     }
 
     if (!process.env.OPENAI_API_KEY) {
       return res.status(500).json({
-        error: "Falta OPENAI_API_KEY en el archivo .env",
+        ok: false,
+        error: "Falta OPENAI_API_KEY en Render o en el archivo .env local.",
       });
     }
 
@@ -40,6 +45,7 @@ Eres AntiLiadas.
 Analiza este mensaje que alguien está a punto de enviar a su pareja.
 
 No seas genérico. Sé específico, directo y humano.
+No manipules. No prometas salvar relaciones. Ayuda a expresar mejor el mensaje.
 
 Mensaje:
 "${mensaje}"
@@ -76,12 +82,17 @@ Explica en 2-3 líneas lo que probablemente sentirá o pensará.
 
     console.log("Análisis generado correctamente");
 
-    res.json({ resultado });
+    return res.json({
+      ok: true,
+      resultado,
+    });
+
   } catch (error) {
     console.error("ERROR EN /analizar:", error);
 
-    res.status(500).json({
-      error: error.message || "Error desconocido en el servidor",
+    return res.status(500).json({
+      ok: false,
+      error: error.message || "Fallo al analizar el mensaje.",
     });
   }
 });
@@ -89,42 +100,3 @@ Explica en 2-3 líneas lo que probablemente sentirá o pensará.
 app.listen(3000, () => {
   console.log("Servidor corriendo en http://localhost:3000");
 });
-res.json({ ok: true, resultado });
-res.status(500).json({ ok: false, error: "Fallo al analizar" });
-import express from "express";
-import cors from "cors";
-
-const app = express();
-
-// 👉 AQUÍ
-app.use(cors({
-  origin: "https://antiliadas.vercel.app"
-}));
-
-app.use(express.json());
-
-// tus endpoints
-import express from "express";
-import cors from "cors";
-
-const app = express();
-
-// 👉 AQUÍ
-app.use(cors({
-  origin: "https://antiliadas.vercel.app"
-}));
-
-app.use(express.json());
-
-// tus endpoints
-app.post("/analizar", async (req, res) => {
-  // lógica
-});
-
-app.listen(3000, () => console.log("Servidor corriendo"));
-
-app.post("/analizar", async (req, res) => {
-  // lógica
-});
-
-app.listen(3000, () => console.log("Servidor corriendo"));
