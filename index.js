@@ -89,3 +89,42 @@ Explica en 2-3 líneas lo que probablemente sentirá o pensará.
 app.listen(3000, () => {
   console.log("Servidor corriendo en http://localhost:3000");
 });
+res.json({ ok: true, resultado });
+res.status(500).json({ ok: false, error: "Fallo al analizar" });
+import express from "express";
+import cors from "cors";
+
+const app = express();
+
+// 👉 AQUÍ
+app.use(cors({
+  origin: "https://antiliadas.vercel.app"
+}));
+
+app.use(express.json());
+
+// tus endpoints
+import express from "express";
+import cors from "cors";
+
+const app = express();
+
+// 👉 AQUÍ
+app.use(cors({
+  origin: "https://antiliadas.vercel.app"
+}));
+
+app.use(express.json());
+
+// tus endpoints
+app.post("/analizar", async (req, res) => {
+  // lógica
+});
+
+app.listen(3000, () => console.log("Servidor corriendo"));
+
+app.post("/analizar", async (req, res) => {
+  // lógica
+});
+
+app.listen(3000, () => console.log("Servidor corriendo"));
