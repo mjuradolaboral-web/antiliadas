@@ -701,7 +701,7 @@ async function enviar() {
   loader.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
   try {
-    const res  = await fetch('https://https://antiliadas.onrender.com/analizar', {
+    const res  = await fetch('https://antiliadas.onrender.com/analizar', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ mensaje })
