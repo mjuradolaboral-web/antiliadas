@@ -23,15 +23,21 @@ app.post("/analizar", async (req, res) => {
   try {
     console.log("Petición recibida:", req.body);
 
-    const { mensaje } = req.body;
-
+    const { mensaje, perfil } = req.body;
+const contextoPareja = `
+Perfil de la pareja/persona:
+- Nombre: ${perfil?.nombre || "la otra persona"}
+- Estilo de comunicación: ${perfil?.estilo || "no especificado"}
+- Cosas que le suelen sentar mal: ${perfil?.gatillos || "no especificado"}
+- Cosas que suelen funcionar con esta persona: ${perfil?.funciona || "no especificado"}
+- Fase actual de la relación: ${perfil?.fase || "no especificada"}
+`;
     if (!mensaje || mensaje.trim().length < 3) {
       return res.status(400).json({
         ok: false,
         error: "Escribe un mensaje un poco más largo para poder analizarlo bien.",
       });
     }
-
     if (!process.env.OPENAI_API_KEY) {
       return res.status(500).json({
         ok: false,
@@ -49,28 +55,34 @@ No manipules. No prometas salvar relaciones. Ayuda a expresar mejor el mensaje.
 
 Mensaje:
 "${mensaje}"
+Contexto adicional:
+${contextoPareja}
+Reglas importantes:
+- Usa el nombre de la otra persona si está disponible.
+- Adapta el análisis a su estilo de comunicación.
+- No respondas como una IA genérica.
+- Valida primero la emoción del usuario en una frase breve.
+- Si el mensaje puede empeorar la situación, dilo claramente.
+- Incluye una frase tipo: "Probable reacción de [nombre]: ..."
+- Da SOLO un mensaje recomendado, no tres versiones principales.
 
-Responde EXACTAMENTE en este formato:
+💬 Validación:
+[1 frase breve validando lo que puede estar sintiendo el usuario]
 
-🔴 Riesgo de conflicto: [número entre 0 y 100]%
+🧠 Qué está pasando realmente:
+[2-3 líneas claras, humanas y sin tecnicismos]
 
-⚠️ Problemas detectados:
-- Señala palabras concretas que escalan.
-- Explica por qué activan conflicto.
-- Indica el tono del mensaje.
+👀 Cómo puede recibirlo [nombre]:
+[explicación breve adaptada al perfil]
 
-💥 Cómo lo puede interpretar tu pareja:
-Explica en 2-3 líneas lo que probablemente sentirá o pensará.
+⛔ ¿Conviene enviarlo ahora?
+[sí / no / mejor esperar, con una razón breve]
 
-✔️ Versión asertiva:
-"[misma idea pero clara y sin atacar]"
+✅ Mensaje recomendado:
+"[mensaje listo para copiar]"
 
-✔️ Versión conciliadora:
-"[reduce conflicto al máximo]"
-
-✔️ Versión vulnerable:
-"[expresa emoción sin culpar]"
-`;
+🔮 Probable reacción de [nombre]:
+[2-3 líneas realistas]
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
