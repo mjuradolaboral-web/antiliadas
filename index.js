@@ -23,21 +23,16 @@ app.post("/analizar", async (req, res) => {
   try {
     console.log("Petición recibida:", req.body);
 
-    const { mensaje, perfil } = req.body;
-const contextoPareja = `
-Perfil de la pareja/persona:
-- Nombre: ${perfil?.nombre || "la otra persona"}
-- Estilo de comunicación: ${perfil?.estilo || "no especificado"}
-- Cosas que le suelen sentar mal: ${perfil?.gatillos || "no especificado"}
-- Cosas que suelen funcionar con esta persona: ${perfil?.funciona || "no especificado"}
-- Fase actual de la relación: ${perfil?.fase || "no especificada"}
-`;
+    const { mensaje, perfil, modo } = req.body;
+const modoAnalisis = modo || "enviar";
+
     if (!mensaje || mensaje.trim().length < 3) {
       return res.status(400).json({
         ok: false,
         error: "Escribe un mensaje un poco más largo para poder analizarlo bien.",
       });
     }
+
     if (!process.env.OPENAI_API_KEY) {
       return res.status(500).json({
         ok: false,
@@ -45,76 +40,97 @@ Perfil de la pareja/persona:
       });
     }
 
-    const prompt = `
+    const contextoPareja = `
+Perfil de la pareja/persona:
+- Nombre: ${perfil?.nombre || "la otra persona"}
+- Estilo de comunicación: ${perfil?.estilo || "no especificado"}
+- Cosas que le suelen sentar mal: ${perfil?.gatillos || "no especificado"}
+- Cosas que suelen funcionar con esta persona: ${perfil?.funciona || "no especificado"}
+- Fase actual de la relación: ${perfil?.fase || "no especificada"}
+`;
+
+    let prompt = "";
+
+if (modoAnalisis === "decodificar") {
+
+  prompt = `
 Eres AntiLiadas.
 
-Analiza este mensaje que alguien está a punto de enviar a su pareja.
+El usuario ha recibido un mensaje de su pareja y quiere entenderlo sin rayarse ni interpretar mal.
 
-No seas genérico. Sé específico, directo y humano.
-No manipules. No prometas salvar relaciones. Ayuda a expresar mejor el mensaje.
+Mensaje recibido:
+"${mensaje}"
+
+Contexto:
+${contextoPareja}
+
+Reglas:
+- No inventes certezas.
+- No alimentes paranoia.
+- Da interpretación probable, no absoluta.
+- Calma emocional primero.
+- Señala qué NO debería asumir.
+- Da una recomendación clara.
+
+Formato:
+
+💬 Validación:
+[1 frase breve]
+
+🧠 Qué puede significar:
+[2-3 interpretaciones realistas]
+
+🚫 Qué no deberías asumir:
+[errores comunes de interpretación]
+
+👉 Qué hacer ahora:
+[recomendación clara]
+
+💬 Respuesta sugerida (si responde):
+"[mensaje opcional]"
+`;
+
+} else {
+
+  prompt = `
+Eres AntiLiadas.
+
+El usuario está a punto de enviar este mensaje a su pareja.
 
 Mensaje:
 "${mensaje}"
 
-Contexto adicional:
+Contexto:
 ${contextoPareja}
 
-Reglas importantes:
-- Usa el nombre de la otra persona si está disponible.
-- Adapta el análisis a su estilo de comunicación.
-- No respondas como una IA genérica.
-- Valida primero la emoción del usuario en una frase breve.
-- Si el mensaje puede empeorar la situación, dilo claramente.
-- Incluye una frase tipo: "Probable reacción de [nombre]: ..."
-- Da SOLO un mensaje recomendado, no tres versiones principales.
+Reglas:
+- Sé directo y humano.
+- Detecta riesgo emocional.
+- Si puede empeorar la situación, dilo.
+- Da una única recomendación clara.
+- No des múltiples versiones.
 
-Responde EXACTAMENTE en este formato:
+Formato:
 
 💬 Validación:
-[1 frase breve validando lo que puede estar sintiendo el usuario]
+[1 frase breve]
 
-🧠 Qué está pasando realmente:
-[2-3 líneas claras, humanas y sin tecnicismos]
+🧠 Qué está pasando:
+[explicación clara]
 
-👀 Cómo puede recibirlo [nombre]:
-[explicación breve adaptada al perfil]
+👀 Cómo lo puede recibir:
+[interpretación de la otra persona]
 
-⛔ ¿Conviene enviarlo ahora?
-[sí / no / mejor esperar, con una razón breve]
+⛔ ¿Conviene enviarlo?
+[sí / no / esperar + razón]
 
 ✅ Mensaje recomendado:
 "[mensaje listo para copiar]"
 
-🔮 Probable reacción de [nombre]:
-[2-3 líneas realistas]
+🔮 Probable reacción:
+[realista]
 `;
-
-Reglas importantes:
-- Usa el nombre de la otra persona si está disponible.
-- Adapta el análisis a su estilo de comunicación.
-- No respondas como una IA genérica.
-- Valida primero la emoción del usuario en una frase breve.
-- Si el mensaje puede empeorar la situación, dilo claramente.
-- Incluye una frase tipo: "Probable reacción de [nombre]: ..."
-- Da SOLO un mensaje recomendado, no tres versiones principales.
-
-💬 Validación:
-[1 frase breve validando lo que puede estar sintiendo el usuario]
-
-🧠 Qué está pasando realmente:
-[2-3 líneas claras, humanas y sin tecnicismos]
-
-👀 Cómo puede recibirlo [nombre]:
-[explicación breve adaptada al perfil]
-
-⛔ ¿Conviene enviarlo ahora?
-[sí / no / mejor esperar, con una razón breve]
-
-✅ Mensaje recomendado:
-"[mensaje listo para copiar]"
-
-🔮 Probable reacción de [nombre]:
-[2-3 líneas realistas]
+}
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",

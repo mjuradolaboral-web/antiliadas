@@ -1005,10 +1005,11 @@ async function enviar() {
     const res = await fetch('https://antiliadas.onrender.com/analizar', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ 
-        mensaje: mensajeEnviado,
-        perfil: obtenerPerfilPareja()
-      })
+      body: JSON.stringify({ 
+  mensaje: mensajeEnviado,
+  perfil: obtenerPerfilPareja(),
+  modo: selectedModo
+})
     });
 
     const data = await res.json();
