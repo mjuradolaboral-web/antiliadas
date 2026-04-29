@@ -768,7 +768,7 @@
 
 <script>
 // ── State ──────────────────────────────────────
-const MAX = 30;
+const MAX = 50;
 let usos = parseInt(localStorage.getItem('al_usos') || '0');
 let history = [];
 try { history = JSON.parse(localStorage.getItem('al_history') || '[]'); } catch {}
@@ -1023,7 +1023,7 @@ async function enviar() {
     }
 
     usos++;
-    localStorage.setItem('al_usos', String(usos));
+    localStorage.setItem('al_usos', '0');
     updateCounter();
 
     const parsed = parseResult(data.resultado);
