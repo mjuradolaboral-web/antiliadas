@@ -1049,25 +1049,42 @@ async function enviar() {
   }
 }
 
+// ── Parser helpers ─────────────────────────────
+function getDecisionFromRisk(risk) {
+  if (risk === null) return null;
+  if (risk >= 75) return { label: 'No lo envíes',   color: '#f87171', bg: 'rgba(248,113,113,0.08)', border: 'rgba(248,113,113,0.3)', icon: '⛔' };
+  if (risk >= 45) return { label: 'Mejor espera',   color: '#fbbf24', bg: 'rgba(251,191,36,0.07)',  border: 'rgba(251,191,36,0.3)',  icon: '⏸️' };
+  return               { label: 'Puedes enviarlo', color: '#22c55e', bg: 'rgba(34,197,94,0.07)',   border: 'rgba(34,197,94,0.3)',   icon: '✅' };
+}
+
 // ── Parser ─────────────────────────────────────
 function parseResult(text) {
   const riskMatch   = text.match(/Riesgo de conflicto[:\s]+(\d+)/i);
-  const issuesMatch = text.match(/Problemas detectados[:\s]*([\s\S]*?)(?=💥|✔️|$)/i);
-  const interpMatch = text.match(/Cómo lo puede interpretar[^:]*[:\s]*([\s\S]*?)(?=✔️|$)/i);
+  const risk        = riskMatch ? parseInt(riskMatch[1]) : null;
+
+  const issuesMatch = text.match(/Problemas detectados[:\s]*([\s\S]*?)(?=\n💥|\n✔️|$)/i);
+  const issues      = issuesMatch ? issuesMatch[1].trim() : null;
+
+  const interpMatch = text.match(/(?:💥\s*)?Cómo lo puede interpretar[^:\n]*[:\s]*([\s\S]*?)(?=\n✔️|$)/i);
+  const interp      = interpMatch ? interpMatch[1].trim() : null;
+
   const asertMatch  = text.match(/Versión asertiva[:\s]*"([^"]+)"/i);
   const concilMatch = text.match(/Versión conciliadora[:\s]*"([^"]+)"/i);
   const vulnerMatch = text.match(/Versión vulnerable[:\s]*"([^"]+)"/i);
 
+  const versions = [
+    asertMatch  ? { tag: 'Asertiva',     text: asertMatch[1]  } : null,
+    concilMatch ? { tag: 'Conciliadora', text: concilMatch[1] } : null,
+    vulnerMatch ? { tag: 'Vulnerable',   text: vulnerMatch[1] } : null,
+  ].filter(Boolean);
+
   return {
-    risk:     riskMatch   ? parseInt(riskMatch[1]) : null,
-    issues:   issuesMatch ? issuesMatch[1].trim()  : null,
-    interp:   interpMatch ? interpMatch[1].trim()  : null,
-    raw:      text,
-    versions: [
-      asertMatch  ? { tag: 'Asertiva',     text: asertMatch[1]  } : null,
-      concilMatch ? { tag: 'Conciliadora', text: concilMatch[1] } : null,
-      vulnerMatch ? { tag: 'Vulnerable',   text: vulnerMatch[1] } : null,
-    ].filter(Boolean)
+    risk,
+    issues,
+    interp,
+    recomendado: versions.length ? versions[0].text : null,
+    versions,
+    raw: text,
   };
 }
 
@@ -1075,19 +1092,31 @@ function parseResult(text) {
 function buildResults(p, ctx) {
   let html = '';
 
-  if (p.risk !== null) {
-    const mc = getMicrocopy(p.risk);
-    html += `<div class="microcopy ${mc.cls}">${mc.text}</div>`;
+  // ── 1. DECISIÓN PRINCIPAL ──────────────────────
+  const dec = getDecisionFromRisk(p.risk);
+  if (dec) {
+    html += `
+      <div class="block" style="border:1px solid ${dec.border};background:${dec.bg};border-left:4px solid ${dec.color};">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <span style="font-size:34px;line-height:1;flex-shrink:0;">${dec.icon}</span>
+          <div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:${dec.color};margin-bottom:5px;">¿Lo envío?</div>
+            <div style="font-size:24px;font-weight:900;color:${dec.color};letter-spacing:-0.5px;">${dec.label}</div>
+          </div>
+        </div>
+      </div>`;
   }
 
+  // ── 2. RIESGO % ────────────────────────────────
   if (p.risk !== null) {
     const color = riskColor(p.risk);
+    const label = p.risk < 35 ? 'Riesgo bajo' : p.risk < 65 ? 'Riesgo moderado' : 'Riesgo alto';
     html += `
       <div class="block risk-block">
-        <div class="block-header">🔴 Riesgo de conflicto</div>
+        <div class="block-header">📊 Riesgo de conflicto</div>
         <div class="risk-row">
           <div class="risk-score" style="color:${color}">${p.risk}%</div>
-          <div class="risk-descriptor">${riskDescriptor(p.risk)}</div>
+          <div class="risk-descriptor" style="color:${color};font-weight:600;font-size:14px;">${label}</div>
         </div>
         <div class="meter-track">
           <div class="meter-fill" id="meter" style="width:0;background:${color}"></div>
@@ -1095,75 +1124,78 @@ function buildResults(p, ctx) {
       </div>`;
   }
 
+  // ── 3. CONTEXTO DECLARADO ──────────────────────
   const hasCtx = ctx && (ctx.objetivo || ctx.tono || ctx.enfado > 0 ||
     (ctx.perfil && (ctx.perfil.nombre || ctx.perfil.estilo)));
-
   if (hasCtx) {
     const emojis = ['','😌','😕','😤','😠','🤬'];
     let chips = '';
-    if (ctx.objetivo)     chips += `<div class="intent-chip">🎯 Querías <strong>${esc(ctx.objetivo)}</strong></div>`;
-    if (ctx.tono)         chips += `<div class="intent-chip">🗣️ Tono: <strong>${esc(ctx.tono)}</strong></div>`;
-    if (ctx.enfado > 0)   chips += `<div class="intent-chip">${emojis[ctx.enfado]} Enfado: <strong>${ctx.enfado}/5</strong></div>`;
-    if (ctx.perfil?.nombre) chips += `<div class="intent-chip">👤 Pareja: <strong>${esc(ctx.perfil.nombre)}</strong></div>`;
-    if (ctx.perfil?.fase)   chips += `<div class="intent-chip">📍 Fase: <strong>${esc(ctx.perfil.fase)}</strong></div>`;
-
+    if (ctx.objetivo)       chips += `<div class="intent-chip">🎯 <strong>${esc(ctx.objetivo)}</strong></div>`;
+    if (ctx.tono)           chips += `<div class="intent-chip">🗣️ <strong>${esc(ctx.tono)}</strong></div>`;
+    if (ctx.enfado > 0)     chips += `<div class="intent-chip">${emojis[ctx.enfado]} Enfado <strong>${ctx.enfado}/5</strong></div>`;
+    if (ctx.perfil?.nombre) chips += `<div class="intent-chip">👤 <strong>${esc(ctx.perfil.nombre)}</strong></div>`;
+    if (ctx.perfil?.fase)   chips += `<div class="intent-chip">📍 <strong>${esc(ctx.perfil.fase)}</strong></div>`;
     html += `
       <div class="block intent-block">
-        <div class="block-header">🎯 Tu intención declarada</div>
-        <div class="block-body">
-          <div class="intent-grid">${chips}</div>
-          <p style="margin-top:10px;font-size:13px;color:var(--muted)">
-            El análisis tiene en cuenta este contexto para darte versiones más adecuadas.
-          </p>
-        </div>
+        <div class="block-header">🎯 Tu contexto</div>
+        <div class="block-body"><div class="intent-grid">${chips}</div></div>
       </div>`;
   }
 
+  // ── 4. QUÉ PUEDE ACTIVAR CONFLICTO ────────────
   if (p.issues) {
     html += `
       <div class="block issues-block">
-        <div class="block-header">⚠️ Frases que pueden activar defensa</div>
+        <div class="block-header">⚠️ Qué puede activar conflicto</div>
         <div class="block-body">${toBullets(p.issues)}</div>
       </div>`;
   }
 
+  // ── 5. CÓMO LO PUEDE RECIBIR ──────────────────
   if (p.interp) {
     html += `
       <div class="block interp-block">
-        <div class="block-header">💥 Cómo lo leerá tu pareja</div>
-        <div class="block-body">${esc(p.interp).replace(/\n/g, '<br>')}</div>
+        <div class="block-header">👀 Cómo lo puede recibir</div>
+        <div class="block-body">${esc(p.interp).replace(/\n/g,'<br>')}</div>
       </div>`;
   }
 
-  if (p.versions.length) {
-    const vHtml = p.versions.map(v => `
+  // ── 6. MENSAJE RECOMENDADO ────────────────────
+  if (p.recomendado) {
+    const clean = p.recomendado.replace(/^["""'']+|["""'']+$/g, '').trim();
+    html += `
+      <div class="block" style="border:1px solid rgba(34,197,94,0.3);background:rgba(34,197,94,0.05);border-left:4px solid #22c55e;">
+        <div class="block-header" style="color:#22c55e;">✅ Mensaje listo para enviar</div>
+        <div style="font-size:15px;color:#e8edf4;line-height:1.7;font-style:italic;margin-bottom:14px;">"${esc(clean)}"</div>
+        <button class="copy-btn" style="position:static;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;font-size:13px;"
+          data-text="${escAttr(clean)}" onclick="copyVersion(this)">
+          📋 Copiar mensaje
+        </button>
+      </div>`;
+  }
+
+  // ── 7. OTRAS VERSIONES ────────────────────────
+  const extraVersions = p.versions.slice(1);
+  if (extraVersions.length) {
+    const vHtml = extraVersions.map(v => `
       <div class="version-item">
         <button class="copy-btn" data-text="${escAttr(v.text)}" onclick="copyVersion(this)">Copiar</button>
-        <div class="version-tag">✔️ ${v.tag}</div>
+        <div class="version-tag">${v.tag}</div>
         <div class="version-text">"${esc(v.text)}"</div>
       </div>`).join('');
     html += `
       <div class="block versions-block">
-        <div class="block-header">💬 Versiones listas para enviar</div>
+        <div class="block-header">💬 Otras versiones</div>
         <div class="block-body">${vHtml}</div>
       </div>`;
   }
 
-  if (!p.risk && !p.issues && !p.interp && !p.versions.length) {
-    html += `<div class="block"><div class="block-body">${esc(p.raw)}</div></div>`;
+  // ── FALLBACK si no se extrajo nada ─────────────
+  if (!dec && !p.issues && !p.interp && !p.recomendado) {
+    html += `<div class="block"><div class="block-body" style="white-space:pre-wrap;">${esc(p.raw)}</div></div>`;
   }
 
-  html += `<div class="saved-badge">✓ Te hemos ayudado a revisar antes de enviar</div>`;
-  html += `
-    <div class="why-block">
-      <div class="block-header">🤔 Por qué no es lo mismo que ChatGPT</div>
-      <div class="why-grid">
-        <div class="why-item"><div class="why-dot"></div>Analiza la intención real, no solo las palabras.</div>
-        <div class="why-item"><div class="why-dot"></div>Detecta escalada emocional específica en contextos de pareja.</div>
-        <div class="why-item"><div class="why-dot"></div>Genera versiones calibradas a tu objetivo, tono y perfil de pareja.</div>
-        <div class="why-item"><div class="why-dot"></div>No necesitas saber hacer prompts. Tú escribes, la app interpreta.</div>
-      </div>
-    </div>`;
+  html += `<div class="saved-badge">✓ Revisado antes de enviar</div>`;
 
   return html;
 }
