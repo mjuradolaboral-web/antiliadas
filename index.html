@@ -102,11 +102,6 @@
     letter-spacing: 0; font-size: 11px; margin-left: 5px;
     color: var(--muted);
   }
-<div class="field-label">¿Qué necesitas ahora?</div>
-<div class="pills" id="pills-modo">
-  <button type="button" class="pill active" onclick="setModo('enviar', this)">Quiero enviar un mensaje</button>
-  <button type="button" class="pill" onclick="setModo('decodificar', this)">Quiero entender lo que me han enviado</button>
-</div>
   /* ── Context section (objetivo / tono / enfado) ─ */
   .context-section {
     border-bottom: 1px solid var(--border);
@@ -1004,14 +999,13 @@ async function enviar() {
 
   try {
     const res = await fetch('https://antiliadas.onrender.com/analizar', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    mensaje: mensajeEnviado,
-    perfil: obtenerPerfilPareja(),
-    modo: selectedModo
-  })
-});
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        mensaje: mensajeEnviado,
+        perfil:  obtenerPerfilPareja(),
+        modo:    selectedModo
+      })
     });
 
     const data = await res.json();
@@ -1024,7 +1018,7 @@ async function enviar() {
     }
 
     usos++;
-    localStorage.setItem('al_usos', '0');
+    localStorage.setItem('al_usos', String(usos));
     updateCounter();
 
     const parsed = parseResult(data.resultado);
@@ -1116,13 +1110,47 @@ function parseResult(text) {
   };
 }
 
+// ── Crisis mode state & handlers ──────────────
+let _crisisExplicado = false;
+
+function _crisisVerPorQue() {
+  if (_crisisExplicado) return;
+  _crisisExplicado = true;
+
+  const whyBtn  = document.getElementById('crisis-why-btn');
+  const safeBtn = document.getElementById('crisis-safe-btn');
+  const payload = document.getElementById('crisis-payload');
+  const anchor  = document.getElementById('crisis-block');
+
+  if (whyBtn) {
+    whyBtn.textContent   = 'Entendido ✓';
+    whyBtn.style.opacity = '0.5';
+    whyBtn.style.cursor  = 'default';
+  }
+
+  if (payload && anchor) {
+    const wrapper = document.createElement('div');
+    wrapper.id = 'crisis-explanation';
+    wrapper.style.cssText = 'display:flex;flex-direction:column;gap:12px;margin-top:0;';
+    wrapper.innerHTML = JSON.parse(payload.textContent);
+    anchor.insertAdjacentElement('afterend', wrapper);
+    wrapper.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  if (safeBtn) {
+    safeBtn.disabled     = false;
+    safeBtn.style.opacity = '1';
+    safeBtn.style.cursor  = 'pointer';
+  }
+}
+
 // ── Builder ────────────────────────────────────
 function buildResults(p, ctx) {
   let html = '';
+  _crisisExplicado = false;
 
   // ── MODO CRISIS (riesgo >= 70) ─────────────────
   if (p.risk !== null && p.risk >= 70) {
-    // Serialize explanation blocks as escaped JSON so the onclick can inject them safely
     let explanationBlocks = '';
     const hasCtx = ctx && (ctx.objetivo || ctx.tono || ctx.enfado > 0 ||
       (ctx.perfil && (ctx.perfil.nombre || ctx.perfil.estilo)));
@@ -1143,12 +1171,8 @@ function buildResults(p, ctx) {
       explanationBlocks += `<div class="block interp-block"><div class="block-header">👀 Cómo lo puede recibir</div><div class="block-body">${esc(p.interp).replace(/\n/g,'<br>')}</div></div>`;
     }
 
-    // Store explanation in a script tag so the onclick handler can read it without XSS risk
-    const storeId = 'crisis-payload-' + Date.now();
-    const safeBtnId = 'crisis-safe-btn-' + Date.now();
-
     html += `
-      <script type="application/json" id="${storeId}">${JSON.stringify(explanationBlocks)}<\/script>
+      <script type="application/json" id="crisis-payload">${JSON.stringify(explanationBlocks)}<\/script>
       <div class="block" id="crisis-block" style="border:1px solid rgba(248,113,113,0.4);background:rgba(248,113,113,0.06);border-left:4px solid #f87171;text-align:center;padding:28px 20px;">
         <div style="font-size:42px;font-weight:900;color:#f87171;letter-spacing:-2px;line-height:1;margin-bottom:10px;">🛑 ALTO</div>
         <div style="font-size:15px;color:#cbd5e1;line-height:1.6;margin-bottom:6px;">
@@ -1158,25 +1182,10 @@ function buildResults(p, ctx) {
         <div style="display:flex;flex-direction:column;gap:10px;">
           <button class="btn" id="crisis-why-btn"
             style="background:rgba(248,113,113,0.12);color:#f87171;border:1px solid rgba(248,113,113,0.35);box-shadow:none;"
-            onclick="(function(btn){
-              if (btn.dataset.revealed) return;
-              btn.dataset.revealed = '1';
-              btn.textContent = 'Entendido ✓';
-              btn.style.opacity = '0.5';
-              btn.style.cursor = 'default';
-              const payload = JSON.parse(document.getElementById('${storeId}').textContent);
-              const anchor = document.getElementById('crisis-block');
-              const wrapper = document.createElement('div');
-              wrapper.style.cssText = 'display:flex;flex-direction:column;gap:12px;margin-top:12px;';
-              wrapper.innerHTML = payload;
-              anchor.insertAdjacentElement('afterend', wrapper);
-              wrapper.scrollIntoView({ behavior:'smooth', block:'nearest' });
-              const safeBtn = document.getElementById('${safeBtnId}');
-              if (safeBtn) { safeBtn.disabled = false; safeBtn.style.opacity = '1'; safeBtn.style.cursor = 'pointer'; }
-            })(this)">Ver por qué</button>
-          ${p.recomendado ? `<button class="btn" id="${safeBtnId}" onclick="mostrarMensajeSeguro()"
+            onclick="_crisisVerPorQue()">Ver por qué</button>
+          ${p.recomendado ? `<button class="btn" id="crisis-safe-btn"
             style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#000;"
-            disabled>Ver mensaje seguro</button>` : ''}
+            onclick="mostrarMensajeSeguro()" disabled>Ver mensaje seguro</button>` : ''}
         </div>
       </div>`;
 
