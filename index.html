@@ -1059,31 +1059,56 @@ function getDecisionFromRisk(risk) {
 
 // ── Parser ─────────────────────────────────────
 function parseResult(text) {
-  const riskMatch   = text.match(/Riesgo de conflicto[:\s]+(\d+)/i);
-  const risk        = riskMatch ? parseInt(riskMatch[1]) : null;
+  // Extract each section by its emoji+label header, consuming until the next emoji header or end
+  function extractSection(pattern) {
+    const m = text.match(pattern);
+    return m ? m[1].trim() : null;
+  }
 
-  const issuesMatch = text.match(/Problemas detectados[:\s]*([\s\S]*?)(?=\n💥|\n✔️|$)/i);
-  const issues      = issuesMatch ? issuesMatch[1].trim() : null;
+  const validacion  = extractSection(/💬\s*Validaci[oó]n[:\s]*([\s\S]*?)(?=\n[💬🧠👀⛔✅🔮]|$)/i);
+  const quePasa     = extractSection(/🧠\s*Qu[eé] est[aá] pasando[:\s]*([\s\S]*?)(?=\n[💬🧠👀⛔✅🔮]|$)/i);
+  const comoRecibe  = extractSection(/👀\s*C[oó]mo lo puede recibir[:\s]*([\s\S]*?)(?=\n[💬🧠👀⛔✅🔮]|$)/i);
+  const convenio    = extractSection(/[⛔✅⏸️]\s*[¿¿]?Conviene envi[aá]rlo[?]?[:\s]*([\s\S]*?)(?=\n[💬🧠👀⛔✅🔮]|$)/i);
+  const msgRaw      = extractSection(/✅\s*Mensaje recomendado[:\s]*([\s\S]*?)(?=\n[💬🧠👀⛔✅🔮]|$)/i);
+  const reaccion    = extractSection(/🔮\s*Probable reacci[oó]n[:\s]*([\s\S]*?)(?=\n[💬🧠👀⛔✅🔮]|$)/i);
 
-  const interpMatch = text.match(/(?:💥\s*)?Cómo lo puede interpretar[^:\n]*[:\s]*([\s\S]*?)(?=\n✔️|$)/i);
-  const interp      = interpMatch ? interpMatch[1].trim() : null;
+  // risk: derive from "¿Conviene enviarlo?" text; fallback to legacy numeric match
+  let risk = null;
+  const legacyRisk = text.match(/Riesgo de conflicto[:\s]+(\d+)/i);
+  if (legacyRisk) {
+    risk = parseInt(legacyRisk[1]);
+  } else if (convenio) {
+    const c = convenio.toLowerCase();
+    if (/no|evita|peligro|conflicto|cuidado/.test(c))   risk = 80;
+    else if (/espera|quiz[aá]|depende|mejor revisa/.test(c)) risk = 55;
+    else risk = 20;
+  }
 
-  const asertMatch  = text.match(/Versión asertiva[:\s]*"([^"]+)"/i);
-  const concilMatch = text.match(/Versión conciliadora[:\s]*"([^"]+)"/i);
-  const vulnerMatch = text.match(/Versión vulnerable[:\s]*"([^"]+)"/i);
+  // recomendado: first quoted string in the message block, or plain text
+  let recomendado = null;
+  if (msgRaw) {
+    const q = msgRaw.match(/["""«]([^"""»\n]+)["""»]/);
+    recomendado = q ? q[1].trim() : msgRaw.replace(/^["""«\s]+|["""»\s]+$/g, '').split('\n')[0].trim();
+  }
 
-  const versions = [
-    asertMatch  ? { tag: 'Asertiva',     text: asertMatch[1]  } : null,
-    concilMatch ? { tag: 'Conciliadora', text: concilMatch[1] } : null,
-    vulnerMatch ? { tag: 'Vulnerable',   text: vulnerMatch[1] } : null,
-  ].filter(Boolean);
+  const versions = recomendado ? [{ tag: 'Recomendado', text: recomendado }] : [];
+
+  // issues: prefer "Qué está pasando", fallback to legacy "Problemas detectados"
+  const legacyIssues = extractSection(/Problemas detectados[:\s]*([\s\S]*?)(?=\n[💥✔️]|$)/i);
+  const issues = quePasa || legacyIssues;
+
+  // interp: prefer "Cómo lo puede recibir", fallback to legacy
+  const legacyInterp = extractSection(/(?:💥\s*)?C[oó]mo lo puede interpretar[^:\n]*[:\s]*([\s\S]*?)(?=\n✔️|$)/i);
+  const interp = comoRecibe || legacyInterp;
 
   return {
     risk,
     issues,
     interp,
-    recomendado: versions.length ? versions[0].text : null,
+    recomendado,
     versions,
+    validacion,
+    reaccion,
     raw: text,
   };
 }
