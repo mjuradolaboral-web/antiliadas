@@ -717,7 +717,7 @@
       </div>
       <span id="uses-text"></span>
     </div>
-    <button class="btn" id="btn" disabled onclick="enviar()">Analizar →</button>
+    <button class="btn" id="btn" onclick="enviar()">Analizar →</button>
   </div>
 </div>
 
@@ -843,34 +843,24 @@ const ENFADO_LABELS = [
 })();
 
 // ── Anger slider ───────────────────────────────
+// ── Anger slider ───────────────────────────────
 function updateEnfado(val) {
-  function updateModoUI() {
-  const label = document.querySelector('.input-label');
-  const ta = document.getElementById('msg');
-  const loaderMsg = document.querySelector('.loader-msg');
-function setModo(modo, btn) {
-  selectedModo = modo;
+  enfadoNivel = parseInt(val);
+  document.getElementById('enfado-label').textContent = ENFADO_LABELS[enfadoNivel] || '';
 
-  document.querySelectorAll('#pills-modo .pill').forEach(b => {
-    b.classList.remove('active');
-  });
+  const pct = ((enfadoNivel - 1) / 4) * 100;
+  const color = pct < 40 ? '#22c55e' : pct < 70 ? '#fbbf24' : '#f87171';
+  const slider = document.getElementById('enfado');
 
-  btn.classList.add('active');
-
-  const label = document.querySelector('.input-label');
-  const ta = document.getElementById('msg');
-  const loaderMsg = document.querySelector('.loader-msg');
-
-  if (modo === 'decodificar') {
-    label.textContent = 'Mensaje que te han enviado';
-    ta.placeholder = 'Ej: Vale, haz lo que quieras. Ya hablaremos cuando se pueda.';
-    loaderMsg.innerHTML = 'Analizando qué puede significar y qué no deberías asumir todavía<span class="loader-dots"><span>.</span><span>.</span><span>.</span></span>';
-  } else {
-    label.textContent = 'Tu mensaje';
-    ta.placeholder = PLACEHOLDERS[Math.floor(Math.random() * PLACEHOLDERS.length)];
-    loaderMsg.innerHTML = 'Revisando tono, intención y posibles malentendidos<span class="loader-dots"><span>.</span><span>.</span><span>.</span></span>';
-  }
+  slider.style.background = `linear-gradient(to right,${color} 0%,${color} ${pct}%,var(--border2) ${pct}%,var(--border2) 100%)`;
 }
+
+// ── Mode UI ────────────────────────────────────
+function updateModoUI() {
+  const label = document.querySelector('.input-label');
+  const ta = document.getElementById('msg');
+  const loaderMsg = document.querySelector('.loader-msg');
+
   if (selectedModo === 'decodificar') {
     label.textContent = 'Mensaje que te han enviado';
     ta.placeholder = 'Ej: Vale, haz lo que quieras. Ya hablaremos cuando se pueda.';
@@ -880,13 +870,6 @@ function setModo(modo, btn) {
     ta.placeholder = PLACEHOLDERS[Math.floor(Math.random() * PLACEHOLDERS.length)];
     loaderMsg.innerHTML = 'Revisando tono, intención y posibles malentendidos<span class="loader-dots"><span>.</span><span>.</span><span>.</span></span>';
   }
-}
-  enfadoNivel = parseInt(val);
-  document.getElementById('enfado-label').textContent = ENFADO_LABELS[enfadoNivel] || '';
-  const pct   = ((enfadoNivel - 1) / 4) * 100;
-  const color = pct < 40 ? '#22c55e' : pct < 70 ? '#fbbf24' : '#f87171';
-  const slider = document.getElementById('enfado');
-  slider.style.background = `linear-gradient(to right,${color} 0%,${color} ${pct}%,var(--border2) ${pct}%,var(--border2) 100%)`;
 }
 
 // ── Partner profile ────────────────────────────
@@ -948,19 +931,12 @@ function toggleProfile() {
 // ── Context prefix (injected into mensaje) ─────
 function buildContexto() {
   const parts = [];
-  if (selectedModo === 'decodificar') {
+if (selectedModo === 'decodificar') {
   parts.push('Modo de análisis: el usuario quiere entender un mensaje recibido, no enviar uno');
   parts.push('Instrucción clave: no alimentar paranoia, no inventar certezas, explicar posibilidades y dar una recomendación clara');
 } else {
   parts.push('Modo de análisis: el usuario quiere enviar un mensaje sin generar conflicto');
   parts.push('Instrucción clave: detectar riesgo de conflicto y proponer una versión mejor para enviar');
-}
-  if (selectedModo === 'decodificar') {
-  parts.push(`Modo de análisis: el usuario quiere entender un mensaje recibido, no enviar uno`);
-  parts.push(`Instrucción clave: no alimentar paranoia, no inventar certezas, explicar posibilidades y dar una recomendación clara`);
-} else {
-  parts.push(`Modo de análisis: el usuario quiere enviar un mensaje sin generar conflicto`);
-  parts.push(`Instrucción clave: detectar riesgo de conflicto y proponer una versión mejor para enviar`);
 }
   if (selectedObjetivo) parts.push(`Objetivo del emisor: "${selectedObjetivo}"`);
   if (selectedTono)     parts.push(`Tono deseado: "${selectedTono}"`);
