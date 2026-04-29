@@ -990,6 +990,7 @@ async function enviar() {
 
   btn.disabled = true;
   resultsEl.innerHTML = '';
+  mensajeMostrado = false;
   loader.classList.add('visible');
   loader.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -1131,7 +1132,7 @@ function buildResults(p, ctx) {
             <div style="font-size:24px;font-weight:900;color:${dec.color};letter-spacing:-0.5px;">${dec.label}</div>
           </div>
         </div>
-        ${showBtn ? `<button class="btn" onclick="mostrarMensajeSeguro()" style="margin-top:14px;width:100%;">Ver mensaje seguro →</button>` : ''}
+        ${showBtn ? `<button class="btn" onclick="mostrarMensajeSeguro()" style="margin-top:14px;width:100%;">Evitar liarla →</button>` : ''}
       </div>`;
   }
 
@@ -1199,24 +1200,67 @@ function buildResults(p, ctx) {
 }
 
 // ── Mostrar mensaje seguro (on demand) ────────
+let mensajeMostrado = false;
 function mostrarMensajeSeguro() {
+  if (mensajeMostrado) return;
   const msg = window.mensajeSeguroGlobal;
   if (!msg) return;
-  const clean = msg.replace(/^["""'']+|["""'']+$/g, '').trim();
-  const el = document.createElement('div');
-  el.className = 'block';
-  el.style.cssText = 'border:1px solid rgba(34,197,94,0.3);background:rgba(34,197,94,0.05);border-left:4px solid #22c55e;';
-  el.innerHTML = `
-    <div class="block-header" style="color:#22c55e;">✅ Mensaje listo para enviar</div>
-    <div style="font-size:15px;color:#e8edf4;line-height:1.7;font-style:italic;margin-bottom:14px;">"${esc(clean)}"</div>
-    <button class="copy-btn" style="position:static;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;font-size:13px;"
-      data-text="${escAttr(clean)}" onclick="copyVersion(this)">
-      📋 Copiar mensaje
-    </button>`;
-  document.getElementById('results').appendChild(el);
-  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  // Remove the trigger button so it can't be clicked twice
-  document.querySelectorAll('[onclick="mostrarMensajeSeguro()"]').forEach(b => b.remove());
+
+  mensajeMostrado = true;
+
+  // Disable trigger button immediately
+  const triggerBtn = document.querySelector('[onclick="mostrarMensajeSeguro()"]');
+  if (triggerBtn) {
+    triggerBtn.disabled = true;
+    triggerBtn.textContent = 'Espera 5 segundos…';
+    triggerBtn.style.opacity = '0.4';
+    triggerBtn.style.cursor = 'not-allowed';
+  }
+
+  // Insert breathing block after the results container
+  const resultsEl = document.getElementById('results');
+  const breatheEl = document.createElement('div');
+  breatheEl.id = 'breathe-block';
+  breatheEl.className = 'block';
+  breatheEl.style.cssText = 'border:1px solid rgba(251,191,36,0.3);background:rgba(251,191,36,0.05);border-left:4px solid #fbbf24;text-align:center;';
+  breatheEl.innerHTML = `
+    <div class="block-header" style="color:#fbbf24;justify-content:center;">⚠️ Estás a punto de empeorar esto</div>
+    <div style="font-size:14px;color:#94a3b8;margin-bottom:14px;">Dame 5 segundos y te doy una forma mejor de decirlo</div>
+    <div id="breathe-count" style="font-size:48px;font-weight:900;color:#fbbf24;letter-spacing:-2px;line-height:1;">5</div>`;
+  resultsEl.appendChild(breatheEl);
+  breatheEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  let secs = 5;
+  const countEl = breatheEl.querySelector('#breathe-count');
+  const interval = setInterval(() => {
+    secs--;
+    if (secs > 0) {
+      countEl.textContent = secs;
+    } else {
+      clearInterval(interval);
+      breatheEl.remove();
+
+      // Show the safe message block
+      const clean = msg.replace(/^["""'']+|["""'']+$/g, '').trim();
+      const msgEl = document.createElement('div');
+      msgEl.className = 'block';
+      msgEl.style.cssText = 'border:1px solid rgba(34,197,94,0.3);background:rgba(34,197,94,0.05);border-left:4px solid #22c55e;';
+      msgEl.innerHTML = `
+        <div class="block-header" style="color:#22c55e;">✅ Mensaje listo para enviar</div>
+        <div style="font-size:15px;color:#e8edf4;line-height:1.7;font-style:italic;margin-bottom:14px;">"${esc(clean)}"</div>
+        <button class="copy-btn" style="position:static;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;font-size:13px;"
+          data-text="${escAttr(clean)}" onclick="copyVersion(this)">
+          📋 Copiar mensaje
+        </button>`;
+      resultsEl.appendChild(msgEl);
+      msgEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      if (triggerBtn) {
+        triggerBtn.textContent = 'Usa este mensaje ✓';
+        triggerBtn.style.opacity = '0.35';
+      }
+    }
+  }, 1000);
 }
 
 function buildErrorBlock(msg) {
@@ -1364,28 +1408,6 @@ function toast(msg) {
   el.className = 'toast'; el.textContent = msg;
   wrap.appendChild(el);
   setTimeout(() => el.remove(), 2600);
-}
-function mostrarMensajeSeguro() {
-  const msg = window.mensajeSeguroGlobal;
-  if (!msg) return;
-
-  const clean = msg.replace(/^["""'']+|["""'']+$/g, '').trim();
-
-  const bloque = `
-    <div class="block" style="border:1px solid rgba(34,197,94,0.3);background:rgba(34,197,94,0.05);border-left:4px solid #22c55e;">
-      <div class="block-header" style="color:#22c55e;">✅ Mensaje seguro</div>
-      <div style="font-size:15px;color:#e8edf4;line-height:1.7;font-style:italic;margin-bottom:14px;">
-        "${clean}"
-      </div>
-      <button class="copy-btn"
-        data-text="${clean.replace(/"/g, '&quot;')}"
-        onclick="copyVersion(this)">
-        📋 Copiar mensaje
-      </button>
-    </div>
-  `;
-
-  document.getElementById('results').insertAdjacentHTML('beforeend', bloque);
 }
 </script>
 </body>
