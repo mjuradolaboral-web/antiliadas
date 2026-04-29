@@ -1116,54 +1116,23 @@ function parseResult(text) {
 // ── Builder ────────────────────────────────────
 function buildResults(p, ctx) {
   let html = '';
-const decisionBlock = getDecisionFromText(p.raw);
-
-if (decisionBlock) {
-  html += `
-    <div class="block" style="
-      border:1px solid ${decisionBlock.border};
-      background:${decisionBlock.bg};
-      border-left:4px solid ${decisionBlock.color};
-      margin-bottom:14px;
-    ">
-      <div style="display:flex;align-items:center;gap:14px;">
-        <span style="font-size:34px;">${decisionBlock.icon}</span>
-        <div>
-          <div style="
-            font-size:10px;
-            font-weight:700;
-            letter-spacing:0.12em;
-            text-transform:uppercase;
-            color:${decisionBlock.color};
-            margin-bottom:4px;
-          ">
-            ¿LO ENVÍO?
-          </div>
-          <div style="
-            font-size:24px;
-            font-weight:900;
-            color:${decisionBlock.color};
-          ">
-            ${decisionBlock.label}
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
+const dec = getDecisionFromRisk(p.risk);
 }
+
   // ── 1. DECISIÓN PRINCIPAL ──────────────────────
   const dec = getDecisionFromRisk(p.risk);
-  if (dec) {
-    html += `
-      <div class="block" style="border:1px solid ${dec.border};background:${dec.bg};border-left:4px solid ${dec.color};">
-        <div style="display:flex;align-items:center;gap:14px;">
-          <span style="font-size:34px;line-height:1;flex-shrink:0;">${dec.icon}</span>
-          <div>
-            <div style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:${dec.color};margin-bottom:5px;">¿Lo envío?</div>
-            <div style="font-size:24px;font-weight:900;color:${dec.color};letter-spacing:-0.5px;">${dec.label}</div>
-          </div>
+if (dec) {
+  html += `
+    <div class="block" style="border:1px solid ${dec.border};background:${dec.bg};border-left:4px solid ${dec.color};">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <span style="font-size:34px;line-height:1;flex-shrink:0;">${dec.icon}</span>
+        <div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:${dec.color};margin-bottom:5px;">¿Lo envío?</div>
+          <div style="font-size:24px;font-weight:900;color:${dec.color};letter-spacing:-0.5px;">${dec.label}</div>
         </div>
-      </div>`;
+      </div>
+    </div>`;
+}
   }
 
   // ── 2. RIESGO % ────────────────────────────────
