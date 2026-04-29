@@ -713,6 +713,38 @@
 
   <!-- Message -->
   <div class="input-label">Tu mensaje</div>
+  <div class="profile-card">
+  <h2>Perfil de tu pareja</h2>
+  <p>Esto ayuda a que AntiLiadas no responda como una IA genérica.</p>
+
+  <input id="partnerName" placeholder="Nombre de tu pareja o persona" />
+
+  <select id="partnerStyle">
+    <option value="">¿Cómo suele comunicarse?</option>
+    <option value="evitativo">Evitativo/a: se distancia cuando hay tensión</option>
+    <option value="ansioso">Ansioso/a: necesita respuesta y seguridad</option>
+    <option value="directo">Directo/a: prefiere claridad</option>
+    <option value="sensible">Sensible: le afectan mucho las formas</option>
+    <option value="pasivo-agresivo">Pasivo-agresivo/a: responde con indirectas</option>
+    <option value="equilibrado">Equilibrado/a</option>
+  </select>
+
+  <input id="partnerTriggers" placeholder="Qué le suele sentar mal: reproches, presión, silencios..." />
+
+  <input id="partnerWorks" placeholder="Qué suele funcionar: calma, claridad, espacio, cariño..." />
+
+  <select id="relationshipPhase">
+    <option value="">Fase actual</option>
+    <option value="estable">Estable</option>
+    <option value="tension">Con tensión reciente</option>
+    <option value="crisis">Crisis</option>
+    <option value="reconciliacion">Reconciliación</option>
+    <option value="distancia">Distancia / frialdad</option>
+  </select>
+
+  <button type="button" id="saveProfileBtn">Guardar perfil</button>
+  <small id="profileStatus"></small>
+</div>
   <textarea id="msg" rows="5"></textarea>
 
   <div class="card-footer">
@@ -873,7 +905,45 @@ function updateCounter() {
     if (dot) dot.classList.toggle('used', i >= left);
   }
 }
+function guardarPerfilPareja() {
+  const perfil = {
+    nombre: document.getElementById("partnerName")?.value || "",
+    estilo: document.getElementById("partnerStyle")?.value || "",
+    gatillos: document.getElementById("partnerTriggers")?.value || "",
+    funciona: document.getElementById("partnerWorks")?.value || "",
+    fase: document.getElementById("relationshipPhase")?.value || ""
+  };
 
+  localStorage.setItem("perfilPareja", JSON.stringify(perfil));
+
+  const status = document.getElementById("profileStatus");
+  if (status) status.innerText = "Perfil guardado";
+}
+
+function cargarPerfilPareja() {
+  const perfil = JSON.parse(localStorage.getItem("perfilPareja") || "{}");
+
+  if (document.getElementById("partnerName")) {
+    document.getElementById("partnerName").value = perfil.nombre || "";
+    document.getElementById("partnerStyle").value = perfil.estilo || "";
+    document.getElementById("partnerTriggers").value = perfil.gatillos || "";
+    document.getElementById("partnerWorks").value = perfil.funciona || "";
+    document.getElementById("relationshipPhase").value = perfil.fase || "";
+  }
+}
+
+function obtenerPerfilPareja() {
+  return JSON.parse(localStorage.getItem("perfilPareja") || "{}");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  cargarPerfilPareja();
+
+  const saveBtn = document.getElementById("saveProfileBtn");
+  if (saveBtn) {
+    saveBtn.addEventListener("click", guardarPerfilPareja);
+  }
+});
 // ── Analyze ────────────────────────────────────
 async function enviar() {
   if (usos >= MAX) { showPaywall(); return; }
@@ -887,7 +957,7 @@ async function enviar() {
 
   // Inject context as prefix so backend prompt gets richer input
   const mensajeEnviado = buildContexto() + rawMsg;
-
+const perfil = obtenerPerfilPareja();
   usos++;
   localStorage.setItem('al_usos', String(usos));
   updateCounter();
@@ -908,7 +978,10 @@ async function enviar() {
     const res  = await fetch('https://antiliadas.onrender.com/analizar', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ mensaje: mensajeEnviado })
+      body: JSON.stringify({
+  mensaje,
+  perfil
+})
     });
     const data = await res.json();
     loader.classList.remove('visible');
