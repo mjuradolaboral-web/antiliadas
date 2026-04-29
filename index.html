@@ -1249,6 +1249,18 @@ function riskColor(n) {
   if (n < 65) return '#fbbf24';
   return '#f87171';
 }
+function getDecisionFromText(text) {
+  const t = text.toLowerCase();
+
+  if (t.includes('no') && t.includes('empeorar')) {
+    return {
+      label: 'NO LO ENVÍES',
+      color: '#f87171',
+      bg: 'rgba(248,113,113,0.08)',
+      border: 'rgba(248,113,113,0.25)',
+      icon: '⛔'
+    };
+  }
 
   if (t.includes('esperar')) {
     return {
