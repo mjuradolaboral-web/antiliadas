@@ -1119,6 +1119,68 @@ function parseResult(text) {
 function buildResults(p, ctx) {
   let html = '';
 
+  // ── MODO CRISIS (riesgo >= 70) ─────────────────
+  if (p.risk !== null && p.risk >= 70) {
+    // Serialize explanation blocks as escaped JSON so the onclick can inject them safely
+    let explanationBlocks = '';
+    const hasCtx = ctx && (ctx.objetivo || ctx.tono || ctx.enfado > 0 ||
+      (ctx.perfil && (ctx.perfil.nombre || ctx.perfil.estilo)));
+    if (hasCtx) {
+      const emojis = ['','😌','😕','😤','😠','🤬'];
+      let chips = '';
+      if (ctx.objetivo)       chips += `<div class="intent-chip">🎯 <strong>${esc(ctx.objetivo)}</strong></div>`;
+      if (ctx.tono)           chips += `<div class="intent-chip">🗣️ <strong>${esc(ctx.tono)}</strong></div>`;
+      if (ctx.enfado > 0)     chips += `<div class="intent-chip">${emojis[ctx.enfado]} Enfado <strong>${ctx.enfado}/5</strong></div>`;
+      if (ctx.perfil?.nombre) chips += `<div class="intent-chip">👤 <strong>${esc(ctx.perfil.nombre)}</strong></div>`;
+      if (ctx.perfil?.fase)   chips += `<div class="intent-chip">📍 <strong>${esc(ctx.perfil.fase)}</strong></div>`;
+      explanationBlocks += `<div class="block intent-block"><div class="block-header">🎯 Tu contexto</div><div class="block-body"><div class="intent-grid">${chips}</div></div></div>`;
+    }
+    if (p.issues) {
+      explanationBlocks += `<div class="block issues-block"><div class="block-header">⚠️ Qué puede activar conflicto</div><div class="block-body">${toBullets(p.issues)}</div></div>`;
+    }
+    if (p.interp) {
+      explanationBlocks += `<div class="block interp-block"><div class="block-header">👀 Cómo lo puede recibir</div><div class="block-body">${esc(p.interp).replace(/\n/g,'<br>')}</div></div>`;
+    }
+
+    // Store explanation in a script tag so the onclick handler can read it without XSS risk
+    const storeId = 'crisis-payload-' + Date.now();
+
+    html += `
+      <script type="application/json" id="${storeId}">${JSON.stringify(explanationBlocks)}<\/script>
+      <div class="block" id="crisis-block" style="border:1px solid rgba(248,113,113,0.4);background:rgba(248,113,113,0.06);border-left:4px solid #f87171;text-align:center;padding:28px 20px;">
+        <div style="font-size:42px;font-weight:900;color:#f87171;letter-spacing:-2px;line-height:1;margin-bottom:10px;">🛑 ALTO</div>
+        <div style="font-size:15px;color:#cbd5e1;line-height:1.6;margin-bottom:6px;">
+          Este mensaje tiene <strong style="color:#f87171;">${p.risk}%</strong> de riesgo de empeorar las cosas ahora mismo.
+        </div>
+        <div style="font-size:13px;color:#64748b;margin-bottom:22px;">No respondas en caliente. Primero entiende por qué.</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button class="btn" id="crisis-why-btn"
+            style="background:rgba(248,113,113,0.12);color:#f87171;border:1px solid rgba(248,113,113,0.35);box-shadow:none;"
+            onclick="(function(btn){
+              if (btn.dataset.revealed) return;
+              btn.dataset.revealed = '1';
+              btn.textContent = 'Explicación mostrada ✓';
+              btn.style.opacity = '0.5';
+              btn.style.cursor = 'default';
+              const payload = JSON.parse(document.getElementById('${storeId}').textContent);
+              const anchor = document.getElementById('crisis-block');
+              const wrapper = document.createElement('div');
+              wrapper.style.cssText = 'display:flex;flex-direction:column;gap:12px;margin-top:12px;';
+              wrapper.innerHTML = payload;
+              anchor.insertAdjacentElement('afterend', wrapper);
+              wrapper.scrollIntoView({ behavior:'smooth', block:'nearest' });
+            })(this)">Ver por qué</button>
+          ${p.recomendado ? `<button class="btn" onclick="mostrarMensajeSeguro()"
+            style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#000;">Ver mensaje seguro</button>` : ''}
+        </div>
+      </div>`;
+
+    html += `<div class="saved-badge">✓ Revisado antes de enviar</div>`;
+    return html;
+  }
+
+  // ── FLUJO NORMAL (riesgo < 70) ─────────────────
+
   // ── 1. DECISIÓN PRINCIPAL ──────────────────────
   const dec = getDecisionFromRisk(p.risk);
   if (dec) {
