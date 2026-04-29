@@ -1113,20 +1113,23 @@ function parseResult(text) {
   };
 }
 
+// ── Builder ────────────────────────────────────
+function buildResults(p, ctx) {
+  let html = '';
+
   // ── 1. DECISIÓN PRINCIPAL ──────────────────────
   const dec = getDecisionFromRisk(p.risk);
-if (dec) {
-  html += `
-    <div class="block" style="border:1px solid ${dec.border};background:${dec.bg};border-left:4px solid ${dec.color};">
-      <div style="display:flex;align-items:center;gap:14px;">
-        <span style="font-size:34px;line-height:1;flex-shrink:0;">${dec.icon}</span>
-        <div>
-          <div style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:${dec.color};margin-bottom:5px;">¿Lo envío?</div>
-          <div style="font-size:24px;font-weight:900;color:${dec.color};letter-spacing:-0.5px;">${dec.label}</div>
+  if (dec) {
+    html += `
+      <div class="block" style="border:1px solid ${dec.border};background:${dec.bg};border-left:4px solid ${dec.color};">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <span style="font-size:34px;line-height:1;flex-shrink:0;">${dec.icon}</span>
+          <div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:${dec.color};margin-bottom:5px;">¿Lo envío?</div>
+            <div style="font-size:24px;font-weight:900;color:${dec.color};letter-spacing:-0.5px;">${dec.label}</div>
+          </div>
         </div>
-      </div>
-    </div>`;
-}
+      </div>`;
   }
 
   // ── 2. RIESGO % ────────────────────────────────
@@ -1249,37 +1252,7 @@ function riskColor(n) {
   if (n < 65) return '#fbbf24';
   return '#f87171';
 }
-function getDecisionFromText(text) {
-  const t = text.toLowerCase();
 
-  if (t.includes('no') && t.includes('empeorar')) {
-    return {
-      label: 'NO LO ENVÍES',
-      color: '#f87171',
-      bg: 'rgba(248,113,113,0.08)',
-      border: 'rgba(248,113,113,0.25)',
-      icon: '⛔'
-    };
-  }
-
-  if (t.includes('esperar')) {
-    return {
-      label: 'MEJOR ESPERA',
-      color: '#fbbf24',
-      bg: 'rgba(251,191,36,0.08)',
-      border: 'rgba(251,191,36,0.25)',
-      icon: '⏳'
-    };
-  }
-
-  return {
-    label: 'PUEDES ENVIARLO',
-    color: '#22c55e',
-    bg: 'rgba(34,197,94,0.08)',
-    border: 'rgba(34,197,94,0.25)',
-    icon: '✅'
-  };
-}
 function riskDescriptor(n) {
   if (n < 25) return 'Mensaje bastante seguro.<br>Puedes enviarlo.';
   if (n < 50) return 'Puede generar algo de fricción.<br>Considera las alternativas.';
