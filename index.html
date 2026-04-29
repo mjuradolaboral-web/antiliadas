@@ -15,7 +15,7 @@
     --border:    #1e2d45;
     --border2:   #263652;
     --accent:    #22c55e;
-    --accent-glow: rgba(34,197,94,0.15);
+    --accent-glow: rgba(34,197,94,0.14);
     --red:    #f87171;
     --yellow: #fbbf24;
     --blue:   #60a5fa;
@@ -42,10 +42,8 @@
   header { text-align: center; margin-bottom: 36px; }
 
   .logo {
-    display: inline-flex;
-    align-items: center;
-    gap: 11px;
-    margin-bottom: 10px;
+    display: inline-flex; align-items: center;
+    gap: 11px; margin-bottom: 10px;
   }
   .logo-icon {
     width: 44px; height: 44px;
@@ -63,24 +61,18 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-  .tagline {
-    font-size: 15px; color: var(--text2);
-    line-height: 1.5; margin-bottom: 12px;
-  }
+  .tagline { font-size: 15px; color: var(--text2); line-height: 1.5; margin-bottom: 12px; }
+
   .vs-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    display: inline-flex; align-items: center; gap: 6px;
     background: rgba(34,197,94,0.07);
     border: 1px solid rgba(34,197,94,0.16);
     border-radius: 99px;
     padding: 5px 12px;
-    font-size: 12px; font-weight: 500;
-    color: var(--accent);
+    font-size: 12px; font-weight: 500; color: var(--accent);
   }
   .live-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
+    width: 7px; height: 7px; border-radius: 50%;
     background: var(--accent);
     animation: blink 2s ease-in-out infinite;
   }
@@ -89,7 +81,7 @@
     50%      { opacity: 0.4; transform: scale(0.7); }
   }
 
-  /* ── Card ────────────────────────────────────── */
+  /* ── Main Card ───────────────────────────────── */
   .card {
     width: 100%; max-width: 660px;
     background: var(--surface);
@@ -99,42 +91,31 @@
     box-shadow: 0 8px 60px rgba(0,0,0,0.5);
   }
 
-  /* ── Context section ─────────────────────────── */
+  /* ── Section divider label ───────────────────── */
+  .section-label {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 14px;
+  }
+  .section-label span {
+    font-weight: 400; text-transform: none;
+    letter-spacing: 0; font-size: 11px; margin-left: 5px;
+    color: var(--muted);
+  }
+
+  /* ── Context section (objetivo / tono / enfado) ─ */
   .context-section {
     border-bottom: 1px solid var(--border);
-    padding-bottom: 20px;
-    margin-bottom: 20px;
-  }
-  .context-label {
-    font-size: 10px; font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 14px;
-  }
-  .context-label span {
-    font-weight: 400;
-    color: var(--muted);
-    text-transform: none;
-    letter-spacing: 0;
-    font-size: 11px;
-    margin-left: 4px;
+    padding-bottom: 20px; margin-bottom: 20px;
   }
 
   .field-label {
     font-size: 12px; font-weight: 600;
-    color: var(--text2);
-    margin-bottom: 8px;
-    margin-top: 14px;
+    color: var(--text2); margin-bottom: 8px; margin-top: 14px;
   }
   .field-label:first-of-type { margin-top: 0; }
 
-  /* Pills */
-  .pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; }
   .pill {
     padding: 5px 12px;
     border: 1px solid var(--border2);
@@ -142,10 +123,8 @@
     background: var(--surface2);
     color: var(--text2);
     font-size: 12px; font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s;
-    font-family: inherit;
-    line-height: 1.4;
+    cursor: pointer; transition: all 0.15s;
+    font-family: inherit; line-height: 1.4;
   }
   .pill:hover { border-color: rgba(34,197,94,0.4); color: var(--text); }
   .pill.active {
@@ -154,71 +133,163 @@
     color: var(--accent);
   }
 
-  /* Anger slider */
   .slider-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 4px;
+    display: flex; align-items: center; gap: 10px; margin-top: 4px;
   }
-  .slider-end {
-    font-size: 11px;
-    color: var(--muted);
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
+  .slider-end { font-size: 11px; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
   input[type="range"] {
-    flex: 1;
-    -webkit-appearance: none;
-    appearance: none;
-    height: 4px;
-    border-radius: 99px;
-    background: var(--border2);
-    outline: none;
-    cursor: pointer;
+    flex: 1; -webkit-appearance: none; appearance: none;
+    height: 4px; border-radius: 99px;
+    background: var(--border2); outline: none; cursor: pointer;
   }
   input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 18px; height: 18px;
-    border-radius: 50%;
+    width: 18px; height: 18px; border-radius: 50%;
     background: var(--accent);
-    box-shadow: 0 0 6px rgba(34,197,94,0.5);
-    transition: background 0.2s;
+    box-shadow: 0 0 6px rgba(34,197,94,0.5); transition: background 0.2s;
   }
   input[type="range"]::-moz-range-thumb {
-    width: 18px; height: 18px;
-    border-radius: 50%;
-    background: var(--accent);
-    border: none;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--accent); border: none;
   }
-  .slider-val {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 5px;
-    text-align: center;
+  .slider-val { font-size: 11px; color: var(--muted); margin-top: 5px; text-align: center; }
+
+  /* ── Partner profile section ─────────────────── */
+  .profile-section {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
   }
 
-  /* ── Message input ───────────────────────────── */
+  .profile-toggle-btn {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; padding: 12px 14px;
+    background: var(--surface2);
+    border: none; cursor: pointer;
+    font-family: inherit; text-align: left;
+    transition: background 0.15s;
+    gap: 8px;
+  }
+  .profile-toggle-btn:hover { background: var(--surface3); }
+
+  .profile-toggle-left {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 600; color: var(--text2);
+    flex: 1; min-width: 0;
+  }
+  .profile-toggle-icon { font-size: 14px; flex-shrink: 0; }
+
+  .profile-saved-badge {
+    display: none;
+    font-size: 11px; font-weight: 500;
+    color: var(--accent);
+    background: rgba(34,197,94,0.1);
+    border: 1px solid rgba(34,197,94,0.2);
+    border-radius: 99px;
+    padding: 2px 9px;
+    white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+    max-width: 160px;
+    flex-shrink: 0;
+  }
+
+  .profile-toggle-arrow {
+    font-size: 9px; color: var(--muted);
+    transition: transform 0.22s;
+    flex-shrink: 0;
+  }
+  .profile-toggle-btn.open .profile-toggle-arrow { transform: rotate(180deg); }
+
+  .profile-body {
+    display: none;
+    padding: 16px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .profile-body.open { display: block; }
+
+  /* Form fields inside profile */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .form-full { grid-column: 1 / -1; }
+
+  .form-field { display: flex; flex-direction: column; gap: 5px; }
+  .form-label {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .form-input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 13px; font-family: inherit;
+    padding: 9px 12px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+  }
+  .form-input:focus {
+    border-color: rgba(34,197,94,0.4);
+    box-shadow: 0 0 0 2px var(--accent-glow);
+  }
+  .form-input::placeholder { color: var(--muted); }
+
+  select.form-input {
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%23475569' d='M5 7L0 2h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 11px center;
+    padding-right: 30px;
+  }
+  select.form-input option { background: #0d1117; color: #e2e8f0; }
+
+  .btn-save-profile {
+    width: 100%; padding: 10px 16px;
+    background: transparent;
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    color: var(--text2);
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+    font-family: inherit;
+    margin-top: 12px;
+  }
+  .btn-save-profile:hover {
+    border-color: var(--accent); color: var(--accent);
+    background: rgba(34,197,94,0.06);
+  }
+
+  #profileStatus {
+    display: block;
+    font-size: 12px; color: var(--accent);
+    text-align: center;
+    margin-top: 8px; min-height: 18px;
+  }
+
+  /* ── Message textarea ────────────────────────── */
   .input-label {
     font-size: 10px; font-weight: 700;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
+    color: var(--muted); letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 8px;
   }
   textarea {
     width: 100%;
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: 10px;
-    color: var(--text);
-    font-size: 15px;
-    font-family: inherit;
-    padding: 13px 15px;
-    resize: vertical;
-    min-height: 100px;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    color: var(--text); font-size: 15px; font-family: inherit;
+    padding: 13px 15px; resize: vertical; min-height: 100px;
+    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
     line-height: 1.7;
   }
   textarea:focus {
@@ -227,25 +298,19 @@
   }
   textarea::placeholder { color: var(--muted); }
 
+  /* ── Card footer ─────────────────────────────── */
   .card-footer {
-    display: flex;
-    align-items: center;
+    display: flex; align-items: center;
     justify-content: space-between;
-    margin-top: 13px;
-    gap: 12px;
-    flex-wrap: wrap;
+    margin-top: 13px; gap: 12px; flex-wrap: wrap;
   }
   .uses-badge {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: var(--text2);
+    display: flex; align-items: center;
+    gap: 8px; font-size: 13px; color: var(--text2);
   }
   .uses-dots { display: flex; gap: 5px; }
   .dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
+    width: 8px; height: 8px; border-radius: 50%;
     background: var(--accent);
     transition: background 0.3s, transform 0.25s;
   }
@@ -254,18 +319,14 @@
   .btn {
     padding: 11px 20px;
     background: linear-gradient(135deg, #22c55e, #16a34a);
-    color: #000;
-    font-weight: 700; font-size: 14px;
-    border: none; border-radius: 10px;
-    cursor: pointer;
+    color: #000; font-weight: 700; font-size: 14px;
+    border: none; border-radius: 10px; cursor: pointer;
     transition: opacity 0.2s, transform 0.1s, box-shadow 0.2s;
     box-shadow: 0 0 16px rgba(34,197,94,0.22);
-    white-space: nowrap;
-    font-family: inherit;
+    white-space: nowrap; font-family: inherit;
   }
   .btn:not(:disabled):hover {
-    opacity: 0.9;
-    box-shadow: 0 0 28px rgba(34,197,94,0.42);
+    opacity: 0.9; box-shadow: 0 0 28px rgba(34,197,94,0.42);
     transform: translateY(-1px);
   }
   .btn:active  { transform: scale(0.97); }
@@ -274,40 +335,29 @@
   /* ── History ─────────────────────────────────── */
   .history-section {
     width: 100%; max-width: 660px;
-    margin-top: 12px;
-    display: none;
+    margin-top: 12px; display: none;
   }
   .history-toggle {
     display: flex; align-items: center; gap: 6px;
     font-size: 12px; color: var(--muted);
-    background: none; border: none;
-    cursor: pointer; padding: 6px 0;
-    transition: color 0.15s;
-    font-family: inherit;
+    background: none; border: none; cursor: pointer;
+    padding: 6px 0; transition: color 0.15s; font-family: inherit;
   }
   .history-toggle:hover { color: var(--text2); }
   .h-arrow { transition: transform 0.2s; display: inline-block; font-size: 9px; }
   .history-toggle.open .h-arrow { transform: rotate(90deg); }
-
   .history-list { display: none; flex-direction: column; gap: 7px; margin-top: 9px; }
   .history-list.open { display: flex; }
-
   .history-item {
     display: flex; align-items: center; gap: 11px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 11px 13px;
-    cursor: pointer;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 11px 13px; cursor: pointer;
     transition: border-color 0.15s, background 0.15s;
     animation: fadeUp 0.25s ease both;
   }
   .history-item:hover { border-color: var(--border2); background: var(--surface2); }
-
   .h-risk-badge {
-    flex-shrink: 0;
-    width: 36px; height: 36px;
-    border-radius: 8px;
+    flex-shrink: 0; width: 36px; height: 36px; border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
     font-size: 12px; font-weight: 800;
   }
@@ -318,30 +368,22 @@
 
   /* ── Loader ──────────────────────────────────── */
   .loader {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    margin-top: 44px;
-    color: var(--text2);
-    font-size: 13px;
-    text-align: center;
-    line-height: 1.6;
+    display: none; flex-direction: column;
+    align-items: center; gap: 16px; margin-top: 44px;
+    color: var(--text2); font-size: 13px;
+    text-align: center; line-height: 1.6;
   }
   .loader.visible { display: flex; }
   .spinner {
     width: 36px; height: 36px;
-    border: 3px solid var(--border2);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.75s linear infinite;
+    border: 3px solid var(--border2); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.75s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
   .loader-msg { max-width: 280px; }
   .loader-dots span {
     display: inline-block;
-    animation: dotBounce 1.3s ease-in-out infinite;
-    margin: 0 1px;
+    animation: dotBounce 1.3s ease-in-out infinite; margin: 0 1px;
   }
   .loader-dots span:nth-child(2) { animation-delay: 0.2s; }
   .loader-dots span:nth-child(3) { animation-delay: 0.4s; }
@@ -354,29 +396,21 @@
   .microcopy {
     display: flex; align-items: flex-start; gap: 10px;
     font-size: 13px; font-weight: 500;
-    padding: 11px 15px;
-    border-radius: 10px;
-    line-height: 1.5;
+    padding: 11px 15px; border-radius: 10px; line-height: 1.5;
   }
-  .microcopy.danger  { background: rgba(248,113,113,0.09); border: 1px solid rgba(248,113,113,0.2); color: var(--red); }
-  .microcopy.warning { background: rgba(251,191,36,0.08);  border: 1px solid rgba(251,191,36,0.2);  color: var(--yellow); }
-  .microcopy.safe    { background: rgba(34,197,94,0.08);   border: 1px solid rgba(34,197,94,0.2);   color: var(--accent); }
+  .microcopy.danger  { background: rgba(248,113,113,0.09); border: 1px solid rgba(248,113,113,0.2);  color: var(--red); }
+  .microcopy.warning { background: rgba(251,191,36,0.08);  border: 1px solid rgba(251,191,36,0.2);   color: var(--yellow); }
+  .microcopy.safe    { background: rgba(34,197,94,0.08);   border: 1px solid rgba(34,197,94,0.2);    color: var(--accent); }
 
   /* ── Results ─────────────────────────────────── */
   .results {
     width: 100%; max-width: 660px;
-    margin-top: 26px;
-    display: flex; flex-direction: column;
-    gap: 12px;
+    margin-top: 26px; display: flex; flex-direction: column; gap: 12px;
   }
-
   .block {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px 20px;
-    opacity: 0;
-    animation: fadeUp 0.35s ease forwards;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px 20px;
+    opacity: 0; animation: fadeUp 0.35s ease forwards;
   }
   .block:nth-child(1) { animation-delay: 0.02s; }
   .block:nth-child(2) { animation-delay: 0.08s; }
@@ -394,183 +428,105 @@
   .block-header {
     display: flex; align-items: center; gap: 8px;
     font-size: 10px; font-weight: 700;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    margin-bottom: 12px;
+    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px;
   }
-  .block-body {
-    font-size: 14px; line-height: 1.75; color: #c4cfde;
-  }
+  .block-body { font-size: 14px; line-height: 1.75; color: #c4cfde; }
   .block-body ul { padding-left: 16px; }
   .block-body li { margin-bottom: 4px; }
 
-  /* Risk block */
   .risk-block { border-left: 3px solid var(--red); }
   .risk-block .block-header { color: var(--red); }
   .risk-row {
     display: flex; align-items: flex-end;
-    justify-content: space-between;
-    margin-bottom: 12px; gap: 12px;
+    justify-content: space-between; margin-bottom: 12px; gap: 12px;
   }
-  .risk-score {
-    font-size: 50px; font-weight: 900;
-    line-height: 1; letter-spacing: -3px; flex-shrink: 0;
-  }
-  .risk-descriptor {
-    font-size: 13px; color: var(--text2);
-    text-align: right; line-height: 1.5;
-    padding-bottom: 2px;
-  }
-  .meter-track {
-    background: var(--surface2); border-radius: 99px;
-    height: 6px; overflow: hidden;
-  }
-  .meter-fill {
-    height: 100%; border-radius: 99px;
-    width: 0;
-    transition: width 1s cubic-bezier(0.4,0,0.2,1);
-  }
+  .risk-score { font-size: 50px; font-weight: 900; line-height: 1; letter-spacing: -3px; flex-shrink: 0; }
+  .risk-descriptor { font-size: 13px; color: var(--text2); text-align: right; line-height: 1.5; padding-bottom: 2px; }
+  .meter-track { background: var(--surface2); border-radius: 99px; height: 6px; overflow: hidden; }
+  .meter-fill { height: 100%; border-radius: 99px; width: 0; transition: width 1s cubic-bezier(0.4,0,0.2,1); }
 
-  /* Intention block */
   .intent-block { border-left: 3px solid var(--teal); }
   .intent-block .block-header { color: var(--teal); }
-  .intent-grid {
-    display: flex; flex-wrap: wrap; gap: 8px;
-  }
+  .intent-grid { display: flex; flex-wrap: wrap; gap: 8px; }
   .intent-chip {
     display: flex; align-items: center; gap: 6px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 7px 12px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 7px 12px;
     font-size: 13px; color: var(--text2);
   }
   .intent-chip strong { color: var(--text); }
 
-  /* Issues / phrases */
   .issues-block { border-left: 3px solid var(--yellow); }
   .issues-block .block-header { color: var(--yellow); }
-
-  /* Interpretation */
   .interp-block { border-left: 3px solid var(--blue); }
   .interp-block .block-header { color: var(--blue); }
-
-  /* Versions */
   .versions-block { border-left: 3px solid var(--purple); }
   .versions-block .block-header { color: var(--purple); }
 
   .version-item {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 13px 46px 13px 14px;
-    margin-bottom: 8px;
-    position: relative;
-    transition: border-color 0.15s;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 13px 46px 13px 14px;
+    margin-bottom: 8px; position: relative; transition: border-color 0.15s;
   }
   .version-item:last-child { margin-bottom: 0; }
   .version-item:hover { border-color: var(--border2); }
-  .version-tag {
-    font-size: 10px; font-weight: 700;
-    letter-spacing: 0.07em; text-transform: uppercase;
-    margin-bottom: 5px; color: var(--purple);
-  }
-  .version-text {
-    font-size: 14px; line-height: 1.65;
-    color: #e8edf4; font-style: italic;
-  }
+  .version-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 5px; color: var(--purple); }
+  .version-text { font-size: 14px; line-height: 1.65; color: #e8edf4; font-style: italic; }
   .copy-btn {
     position: absolute; top: 11px; right: 11px;
-    background: var(--surface3);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--text2);
-    font-size: 11px; font-weight: 600;
-    padding: 4px 8px;
-    cursor: pointer; transition: all 0.15s;
-    font-family: inherit;
+    background: var(--surface3); border: 1px solid var(--border);
+    border-radius: 6px; color: var(--text2);
+    font-size: 11px; font-weight: 600; padding: 4px 8px;
+    cursor: pointer; transition: all 0.15s; font-family: inherit;
   }
   .copy-btn:hover { background: var(--border2); color: var(--text); }
-  .copy-btn.copied {
-    border-color: var(--accent); color: var(--accent);
-    background: rgba(34,197,94,0.08);
-  }
+  .copy-btn.copied { border-color: var(--accent); color: var(--accent); background: rgba(34,197,94,0.08); }
 
-  /* Error */
   .error-block {
-    background: var(--surface);
-    border: 1px solid rgba(248,113,113,0.22);
-    border-left: 3px solid var(--red);
-    border-radius: var(--radius);
-    padding: 18px 20px;
+    background: var(--surface); border: 1px solid rgba(248,113,113,0.22);
+    border-left: 3px solid var(--red); border-radius: var(--radius); padding: 18px 20px;
   }
   .error-block .block-header { color: var(--red); }
 
-  /* Saved badge */
   .saved-badge {
-    display: flex; align-items: center;
-    justify-content: center; gap: 6px;
-    font-size: 12px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; font-size: 12px; font-weight: 600;
     color: var(--accent); padding: 8px;
-    opacity: 0;
-    animation: fadeUp 0.3s ease 0.42s forwards;
+    opacity: 0; animation: fadeUp 0.3s ease 0.42s forwards;
   }
 
-  /* ── Why-not-ChatGPT block ───────────────────── */
   .why-block {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px 20px;
-    opacity: 0;
-    animation: fadeUp 0.35s ease 0.48s forwards;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px 20px;
+    opacity: 0; animation: fadeUp 0.35s ease 0.48s forwards;
   }
   .why-block .block-header { color: var(--muted); }
-  .why-grid {
-    display: flex; flex-direction: column; gap: 8px;
-    margin-top: 4px;
-  }
-  .why-item {
-    display: flex; align-items: flex-start; gap: 10px;
-    font-size: 13px; color: var(--text2); line-height: 1.5;
-  }
-  .why-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--accent); margin-top: 5px; flex-shrink: 0;
-  }
+  .why-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+  .why-item { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text2); line-height: 1.5; }
+  .why-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-top: 5px; flex-shrink: 0; }
 
   /* ── Disclaimer ──────────────────────────────── */
   .disclaimer {
-    width: 100%; max-width: 660px;
-    margin-top: 16px;
-    font-size: 12px; color: var(--muted);
-    line-height: 1.6; text-align: center;
-    padding: 0 8px;
-    opacity: 0;
-    animation: fadeUp 0.3s ease 0.55s forwards;
+    width: 100%; max-width: 660px; margin-top: 16px;
+    font-size: 12px; color: var(--muted); line-height: 1.6;
+    text-align: center; padding: 0 8px;
+    opacity: 0; animation: fadeUp 0.3s ease 0.55s forwards;
   }
 
   /* ── Paywall ─────────────────────────────────── */
   .paywall-overlay {
-    display: none;
-    position: fixed; inset: 0;
+    display: none; position: fixed; inset: 0;
     background: rgba(7,9,15,0.9);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    z-index: 100;
-    align-items: center; justify-content: center;
-    padding: 16px;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    z-index: 100; align-items: center; justify-content: center; padding: 16px;
   }
   .paywall-overlay.visible { display: flex; animation: fadeIn 0.3s ease; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
   .paywall-card {
     width: 100%; max-width: 440px;
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    border-radius: 20px;
-    padding: 34px 28px;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.7);
-    text-align: center;
+    background: var(--surface); border: 1px solid var(--border2);
+    border-radius: 20px; padding: 34px 28px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.7); text-align: center;
     animation: slideUp 0.38s cubic-bezier(0.34,1.56,0.64,1);
   }
   @keyframes slideUp {
@@ -579,87 +535,62 @@
   }
   .paywall-icon { font-size: 42px; display: block; margin-bottom: 14px; }
   .paywall-title { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 10px; }
-  .paywall-sub {
-    font-size: 14px; color: var(--text2);
-    line-height: 1.7; margin-bottom: 22px;
-  }
+  .paywall-sub { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 22px; }
   .paywall-benefits {
-    list-style: none; text-align: left;
-    margin-bottom: 24px;
+    list-style: none; text-align: left; margin-bottom: 24px;
     display: flex; flex-direction: column; gap: 9px;
   }
-  .paywall-benefits li {
-    display: flex; align-items: center;
-    gap: 9px; font-size: 13px; color: var(--text2);
-  }
+  .paywall-benefits li { display: flex; align-items: center; gap: 9px; font-size: 13px; color: var(--text2); }
   .paywall-benefits li::before {
-    content: "✓"; flex-shrink: 0;
-    width: 20px; height: 20px;
-    background: rgba(34,197,94,0.1);
-    border: 1px solid rgba(34,197,94,0.28);
-    border-radius: 5px;
-    color: var(--accent); font-size: 11px; font-weight: 700;
+    content: "✓"; flex-shrink: 0; width: 20px; height: 20px;
+    background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.28);
+    border-radius: 5px; color: var(--accent); font-size: 11px; font-weight: 700;
     display: flex; align-items: center; justify-content: center;
   }
-  .paywall-price {
-    font-size: 11px; color: var(--muted);
-    text-transform: uppercase; letter-spacing: 0.05em;
-    margin-bottom: 10px;
-  }
-  .paywall-price strong {
-    font-size: 22px; font-weight: 800;
-    color: var(--text); letter-spacing: -0.5px;
-  }
+  .paywall-price { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .paywall-price strong { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
   .btn-pro {
     width: 100%; padding: 14px;
     background: linear-gradient(135deg, #22c55e, #16a34a);
     color: #000; font-weight: 800; font-size: 15px;
-    border: none; border-radius: 12px;
-    cursor: pointer; font-family: inherit;
+    border: none; border-radius: 12px; cursor: pointer;
+    font-family: inherit; margin-bottom: 10px;
     transition: opacity 0.2s, transform 0.1s, box-shadow 0.2s;
     box-shadow: 0 0 26px rgba(34,197,94,0.32);
-    margin-bottom: 10px;
   }
   .btn-pro:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 0 36px rgba(34,197,94,0.48); }
   .btn-pro:active { transform: scale(0.98); }
-
   .paywall-share {
-    font-size: 12px; color: var(--muted);
-    cursor: pointer; padding: 6px;
-    transition: color 0.15s;
-    border: none; background: none;
-    font-family: inherit;
-    display: block; width: 100%; text-align: center;
+    font-size: 12px; color: var(--muted); cursor: pointer; padding: 6px;
+    transition: color 0.15s; border: none; background: none;
+    font-family: inherit; display: block; width: 100%; text-align: center;
   }
   .paywall-share:hover { color: var(--text2); }
 
   /* ── Toast ───────────────────────────────────── */
   .toast-wrap {
     position: fixed; bottom: 22px; left: 50%;
-    transform: translateX(-50%);
-    z-index: 200; pointer-events: none;
+    transform: translateX(-50%); z-index: 200; pointer-events: none;
     display: flex; flex-direction: column; gap: 7px; align-items: center;
   }
   .toast {
-    background: var(--surface3);
-    border: 1px solid var(--border2);
-    border-radius: 10px;
-    padding: 9px 16px;
-    font-size: 13px; font-weight: 500;
-    color: var(--text); white-space: nowrap;
-    box-shadow: 0 4px 18px rgba(0,0,0,0.4);
+    background: var(--surface3); border: 1px solid var(--border2);
+    border-radius: 10px; padding: 9px 16px;
+    font-size: 13px; font-weight: 500; color: var(--text);
+    white-space: nowrap; box-shadow: 0 4px 18px rgba(0,0,0,0.4);
     animation: toastIn 0.25s ease, toastOut 0.3s ease 2.2s forwards;
   }
   @keyframes toastIn  { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-5px); } }
 
   /* ── Responsive ──────────────────────────────── */
-  @media (max-width: 480px) {
+  @media (max-width: 520px) {
     body { padding: 28px 12px 100px; }
     .card { padding: 18px; }
     .risk-score { font-size: 40px; }
     .card-footer { flex-direction: column; align-items: flex-start; }
     .btn { width: 100%; text-align: center; }
+    .form-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -681,11 +612,15 @@
 <!-- ── Input Card ─────────────────────────────── -->
 <div class="card">
 
-  <!-- Context (optional) -->
+  <!-- Context: objetivo / tono / enfado -->
   <div class="context-section">
-    <div class="context-label">Contexto <span>— opcional, pero mejora el análisis</span></div>
-
-    <div class="field-label">¿Qué quieres conseguir con este mensaje?</div>
+    <div class="section-label">Contexto <span>— opcional, mejora el análisis</span></div>
+<div class="field-label">¿Qué necesitas ahora?</div>
+<div class="pills" id="pills-modo">
+  <button class="pill active" data-val="enviar">Quiero enviar un mensaje</button>
+  <button class="pill" data-val="decodificar">Quiero entender lo que me han enviado</button>
+</div>
+    <div class="field-label">¿Qué quieres conseguir?</div>
     <div class="pills" id="pills-objetivo">
       <button class="pill" data-val="marcar un límite">Marcar un límite</button>
       <button class="pill" data-val="explicar cómo me siento">Cómo me siento</button>
@@ -711,40 +646,62 @@
     <div class="slider-val" id="enfado-label">Sin especificar</div>
   </div>
 
+  <!-- Partner profile (collapsible) -->
+  <div class="profile-section">
+    <button class="profile-toggle-btn" id="profile-toggle-btn" onclick="toggleProfile()">
+      <div class="profile-toggle-left">
+        <span class="profile-toggle-icon">👤</span>
+        Personalizar con el perfil de tu pareja
+      </div>
+      <span class="profile-saved-badge" id="profile-saved-badge"></span>
+      <span class="profile-toggle-arrow">▼</span>
+    </button>
+
+    <div class="profile-body" id="profile-body">
+      <div class="form-grid">
+        <div class="form-field">
+          <label class="form-label" for="partnerName">Nombre</label>
+          <input class="form-input" id="partnerName" type="text" placeholder="Nombre de tu pareja">
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="partnerStyle">Cómo suele comunicarse</label>
+          <select class="form-input" id="partnerStyle">
+            <option value="">Elige una opción</option>
+            <option value="evitativo">Se distancia cuando hay tensión</option>
+            <option value="ansioso">Necesita respuesta y seguridad</option>
+            <option value="directo">Prefiere claridad directa</option>
+            <option value="sensible">Le afectan mucho las formas</option>
+            <option value="pasivo-agresivo">Responde con indirectas</option>
+            <option value="equilibrado">Comunicación equilibrada</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="partnerTriggers">Qué le suele sentar mal</label>
+          <input class="form-input" id="partnerTriggers" type="text" placeholder="Reproches, presión, silencios...">
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="partnerWorks">Qué suele funcionar</label>
+          <input class="form-input" id="partnerWorks" type="text" placeholder="Calma, claridad, espacio, cariño...">
+        </div>
+        <div class="form-field form-full">
+          <label class="form-label" for="relationshipPhase">Fase actual</label>
+          <select class="form-input" id="relationshipPhase">
+            <option value="">Elige una opción</option>
+            <option value="estable">Estable</option>
+            <option value="tension">Con tensión reciente</option>
+            <option value="crisis">En crisis</option>
+            <option value="reconciliacion">En reconciliación</option>
+            <option value="distancia">Con distancia o frialdad</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-save-profile" id="saveProfileBtn">Guardar perfil</button>
+      <small id="profileStatus"></small>
+    </div>
+  </div>
+
   <!-- Message -->
   <div class="input-label">Tu mensaje</div>
-  <div class="profile-card">
-  <h2>Perfil de tu pareja</h2>
-  <p>Esto ayuda a que AntiLiadas no responda como una IA genérica.</p>
-
-  <input id="partnerName" placeholder="Nombre de tu pareja o persona" />
-
-  <select id="partnerStyle">
-    <option value="">¿Cómo suele comunicarse?</option>
-    <option value="evitativo">Evitativo/a: se distancia cuando hay tensión</option>
-    <option value="ansioso">Ansioso/a: necesita respuesta y seguridad</option>
-    <option value="directo">Directo/a: prefiere claridad</option>
-    <option value="sensible">Sensible: le afectan mucho las formas</option>
-    <option value="pasivo-agresivo">Pasivo-agresivo/a: responde con indirectas</option>
-    <option value="equilibrado">Equilibrado/a</option>
-  </select>
-
-  <input id="partnerTriggers" placeholder="Qué le suele sentar mal: reproches, presión, silencios..." />
-
-  <input id="partnerWorks" placeholder="Qué suele funcionar: calma, claridad, espacio, cariño..." />
-
-  <select id="relationshipPhase">
-    <option value="">Fase actual</option>
-    <option value="estable">Estable</option>
-    <option value="tension">Con tensión reciente</option>
-    <option value="crisis">Crisis</option>
-    <option value="reconciliacion">Reconciliación</option>
-    <option value="distancia">Distancia / frialdad</option>
-  </select>
-
-  <button type="button" id="saveProfileBtn">Guardar perfil</button>
-  <small id="profileStatus"></small>
-</div>
   <textarea id="msg" rows="5"></textarea>
 
   <div class="card-footer">
@@ -807,15 +764,15 @@
 
 <script>
 // ── State ──────────────────────────────────────
-const MAX = 10;
+const MAX = 20;
 let usos = parseInt(localStorage.getItem('al_usos') || '0');
 let history = [];
 try { history = JSON.parse(localStorage.getItem('al_history') || '[]'); } catch {}
 
+let selectedModo     = 'enviar';
 let selectedObjetivo = null;
 let selectedTono     = null;
-let enfadoNivel      = 0; // 0 = not set
-
+let enfadoNivel      = 0;
 const PLACEHOLDERS = [
   "Ej: Siempre haces lo mismo, nunca me escuchas...",
   "Ej: ¿Por qué no me avisaste? Ya me cansé de esto",
@@ -825,40 +782,57 @@ const PLACEHOLDERS = [
 ];
 
 const ENFADO_LABELS = [
-  '',
-  'Nivel 1 — Muy tranquilo',
-  'Nivel 2 — Algo molesto',
-  'Nivel 3 — Bastante molesto',
-  'Nivel 4 — Enfadado',
-  'Nivel 5 — Muy enfadado'
+  '', 'Nivel 1 — Muy tranquilo', 'Nivel 2 — Algo molesto',
+  'Nivel 3 — Bastante molesto', 'Nivel 4 — Enfadado', 'Nivel 5 — Muy enfadado'
 ];
 
 // ── Init ───────────────────────────────────────
 (function init() {
+  // Textarea
   const ta = document.getElementById('msg');
   ta.placeholder = PLACEHOLDERS[Math.floor(Math.random() * PLACEHOLDERS.length)];
   ta.addEventListener('input', () => {
     document.getElementById('btn').disabled = ta.value.trim().length === 0;
   });
 
-  // Pills: single-select per group
-  ['pills-objetivo', 'pills-tono'].forEach(groupId => {
+  // Pills (single select per group)
+ ['pills-modo', 'pills-objetivo', 'pills-tono'].forEach(groupId => {
     document.getElementById(groupId).querySelectorAll('.pill').forEach(btn => {
       btn.addEventListener('click', () => {
-        const group = btn.closest('.pills');
-        const isActive = btn.classList.contains('active');
+        const group   = btn.closest('.pills');
+        const wasActive = btn.classList.contains('active');
         group.querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
-        if (!isActive) {
+        if (!wasActive) {
           btn.classList.add('active');
-          if (groupId === 'pills-objetivo') selectedObjetivo = btn.dataset.val;
-          else                              selectedTono     = btn.dataset.val;
+          if (groupId === 'pills-modo') {
+  selectedModo = btn.dataset.val;
+  updateModoUI();
+} else if (groupId === 'pills-objetivo') {
+  selectedObjetivo = btn.dataset.val;
+} else {
+  selectedTono = btn.dataset.val;
+}
         } else {
-          if (groupId === 'pills-objetivo') selectedObjetivo = null;
-          else                              selectedTono     = null;
+          if (groupId === 'pills-modo') {
+  selectedModo = 'enviar';
+  btn.classList.add('active');
+  updateModoUI();
+} else if (groupId === 'pills-objetivo') {
+  selectedObjetivo = null;
+} else {
+  selectedTono = null;
+}
         }
       });
     });
   });
+
+  // Save profile button
+  const saveBtn = document.getElementById('saveProfileBtn');
+  if (saveBtn) saveBtn.addEventListener('click', guardarPerfilPareja);
+
+  // Load saved profile into form
+  cargarPerfilPareja();
 
   updateCounter();
   renderHistory();
@@ -866,23 +840,106 @@ const ENFADO_LABELS = [
 
 // ── Anger slider ───────────────────────────────
 function updateEnfado(val) {
+  function updateModoUI() {
+  const label = document.querySelector('.input-label');
+  const ta = document.getElementById('msg');
+  const loaderMsg = document.querySelector('.loader-msg');
+
+  if (selectedModo === 'decodificar') {
+    label.textContent = 'Mensaje que te han enviado';
+    ta.placeholder = 'Ej: Vale, haz lo que quieras. Ya hablaremos cuando se pueda.';
+    loaderMsg.innerHTML = 'Analizando qué puede significar y qué no deberías asumir todavía<span class="loader-dots"><span>.</span><span>.</span><span>.</span></span>';
+  } else {
+    label.textContent = 'Tu mensaje';
+    ta.placeholder = PLACEHOLDERS[Math.floor(Math.random() * PLACEHOLDERS.length)];
+    loaderMsg.innerHTML = 'Revisando tono, intención y posibles malentendidos<span class="loader-dots"><span>.</span><span>.</span><span>.</span></span>';
+  }
+}
   enfadoNivel = parseInt(val);
   document.getElementById('enfado-label').textContent = ENFADO_LABELS[enfadoNivel] || '';
-  // Tint the slider thumb via CSS custom property
-  const pct = ((enfadoNivel - 1) / 4) * 100;
+  const pct   = ((enfadoNivel - 1) / 4) * 100;
   const color = pct < 40 ? '#22c55e' : pct < 70 ? '#fbbf24' : '#f87171';
   const slider = document.getElementById('enfado');
-  slider.style.setProperty('--thumb-color', color);
-  // Inline style for thumb (cross-browser trick via gradient background)
-  slider.style.background = `linear-gradient(to right, ${color} 0%, ${color} ${pct}%, var(--border2) ${pct}%, var(--border2) 100%)`;
+  slider.style.background = `linear-gradient(to right,${color} 0%,${color} ${pct}%,var(--border2) ${pct}%,var(--border2) 100%)`;
 }
 
-// ── Context prefix ─────────────────────────────
+// ── Partner profile ────────────────────────────
+function obtenerPerfilPareja() {
+  try { return JSON.parse(localStorage.getItem('perfilPareja') || '{}'); } catch { return {}; }
+}
+
+function guardarPerfilPareja() {
+  const perfil = {
+    nombre:   document.getElementById('partnerName')?.value.trim()    || '',
+    estilo:   document.getElementById('partnerStyle')?.value          || '',
+    gatillos: document.getElementById('partnerTriggers')?.value.trim()|| '',
+    funciona: document.getElementById('partnerWorks')?.value.trim()   || '',
+    fase:     document.getElementById('relationshipPhase')?.value     || ''
+  };
+  try { localStorage.setItem('perfilPareja', JSON.stringify(perfil)); } catch {}
+
+  const statusEl = document.getElementById('profileStatus');
+  if (statusEl) {
+    statusEl.textContent = '✓ Perfil guardado. El análisis será más personal.';
+    setTimeout(() => { statusEl.textContent = ''; }, 4000);
+  }
+  updateProfileBadge(perfil);
+}
+
+function cargarPerfilPareja() {
+  const perfil = obtenerPerfilPareja();
+  const fields = {
+    partnerName:      perfil.nombre   || '',
+    partnerStyle:     perfil.estilo   || '',
+    partnerTriggers:  perfil.gatillos || '',
+    partnerWorks:     perfil.funciona || '',
+    relationshipPhase: perfil.fase    || ''
+  };
+  Object.entries(fields).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  });
+  updateProfileBadge(perfil);
+}
+
+function updateProfileBadge(perfil) {
+  const badge = document.getElementById('profile-saved-badge');
+  if (!badge) return;
+  const parts = [perfil.nombre, perfil.estilo].filter(Boolean);
+  if (parts.length) {
+    badge.textContent = parts.join(' · ');
+    badge.style.display = 'inline';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function toggleProfile() {
+  document.getElementById('profile-body').classList.toggle('open');
+  document.getElementById('profile-toggle-btn').classList.toggle('open');
+}
+
+// ── Context prefix (injected into mensaje) ─────
 function buildContexto() {
   const parts = [];
+  if (selectedModo === 'decodificar') {
+  parts.push(`Modo de análisis: el usuario quiere entender un mensaje recibido, no enviar uno`);
+  parts.push(`Instrucción clave: no alimentar paranoia, no inventar certezas, explicar posibilidades y dar una recomendación clara`);
+} else {
+  parts.push(`Modo de análisis: el usuario quiere enviar un mensaje sin generar conflicto`);
+  parts.push(`Instrucción clave: detectar riesgo de conflicto y proponer una versión mejor para enviar`);
+}
   if (selectedObjetivo) parts.push(`Objetivo del emisor: "${selectedObjetivo}"`);
   if (selectedTono)     parts.push(`Tono deseado: "${selectedTono}"`);
   if (enfadoNivel > 0)  parts.push(`Nivel de enfado: ${enfadoNivel}/5`);
+
+  const perfil = obtenerPerfilPareja();
+  if (perfil.nombre)   parts.push(`Nombre de la pareja: "${perfil.nombre}"`);
+  if (perfil.estilo)   parts.push(`Estilo comunicativo de la pareja: "${perfil.estilo}"`);
+  if (perfil.gatillos) parts.push(`Qué le sienta mal a la pareja: "${perfil.gatillos}"`);
+  if (perfil.funciona) parts.push(`Qué suele funcionar con la pareja: "${perfil.funciona}"`);
+  if (perfil.fase)     parts.push(`Fase de la relación: "${perfil.fase}"`);
+
   if (!parts.length) return '';
   return `[Contexto del emisor — ${parts.join(' | ')}]\n\n`;
 }
@@ -902,48 +959,10 @@ function updateCounter() {
 
   for (let i = 0; i < 3; i++) {
     const dot = document.getElementById('d' + i);
-    if (dot) dot.classList.toggle('used', i >= left);
-  }
-}
-function guardarPerfilPareja() {
-  const perfil = {
-    nombre: document.getElementById("partnerName")?.value || "",
-    estilo: document.getElementById("partnerStyle")?.value || "",
-    gatillos: document.getElementById("partnerTriggers")?.value || "",
-    funciona: document.getElementById("partnerWorks")?.value || "",
-    fase: document.getElementById("relationshipPhase")?.value || ""
-  };
-
-  localStorage.setItem("perfilPareja", JSON.stringify(perfil));
-
-  const status = document.getElementById("profileStatus");
-  if (status) status.innerText = "Perfil guardado";
-}
-
-function cargarPerfilPareja() {
-  const perfil = JSON.parse(localStorage.getItem("perfilPareja") || "{}");
-
-  if (document.getElementById("partnerName")) {
-    document.getElementById("partnerName").value = perfil.nombre || "";
-    document.getElementById("partnerStyle").value = perfil.estilo || "";
-    document.getElementById("partnerTriggers").value = perfil.gatillos || "";
-    document.getElementById("partnerWorks").value = perfil.funciona || "";
-    document.getElementById("relationshipPhase").value = perfil.fase || "";
+    if (dot) dot.classList.toggle('used', i >= Math.min(left, 3));
   }
 }
 
-function obtenerPerfilPareja() {
-  return JSON.parse(localStorage.getItem("perfilPareja") || "{}");
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  cargarPerfilPareja();
-
-  const saveBtn = document.getElementById("saveProfileBtn");
-  if (saveBtn) {
-    saveBtn.addEventListener("click", guardarPerfilPareja);
-  }
-});
 // ── Analyze ────────────────────────────────────
 async function enviar() {
   if (usos >= MAX) { showPaywall(); return; }
@@ -955,33 +974,42 @@ async function enviar() {
 
   if (!rawMsg) return;
 
-  // Inject context as prefix so backend prompt gets richer input
   const mensajeEnviado = buildContexto() + rawMsg;
-const perfil = obtenerPerfilPareja();
+
+if (data.error) {
+  resultsEl.innerHTML = buildErrorBlock(data.error);
+} else {
   usos++;
   localStorage.setItem('al_usos', String(usos));
   updateCounter();
+
+  const parsed = parseResult(data.resultado);
+  saveToHistory(rawMsg, parsed, data.resultado, ctx);
+  resultsEl.innerHTML = buildResults(parsed, ctx);
+  setTimeout(() => animateMeter(parsed.risk), 80);
+  resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  toast('✓ Análisis guardado en tu historial');
+  if (usos >= MAX) setTimeout(showPaywall, 3200);
+}
 
   btn.disabled = true;
   resultsEl.innerHTML = '';
   loader.classList.add('visible');
   loader.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-  // Snapshot context for this analysis
-  const ctx = {
-    objetivo: selectedObjetivo,
-    tono:     selectedTono,
-    enfado:   enfadoNivel
-  };
+const ctx = {
+  modo:     selectedModo,
+  objetivo: selectedObjetivo,
+  tono:     selectedTono,
+  enfado:   enfadoNivel,
+  perfil:   obtenerPerfilPareja()
+};
 
   try {
     const res  = await fetch('https://antiliadas.onrender.com/analizar', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-  mensaje,
-  perfil
-})
+      body:    JSON.stringify({ mensaje: mensajeEnviado })
     });
     const data = await res.json();
     loader.classList.remove('visible');
@@ -1034,13 +1062,11 @@ function parseResult(text) {
 function buildResults(p, ctx) {
   let html = '';
 
-  // Microcopy banner
   if (p.risk !== null) {
     const mc = getMicrocopy(p.risk);
     html += `<div class="microcopy ${mc.cls}">${mc.text}</div>`;
   }
 
-  // Risk
   if (p.risk !== null) {
     const color = riskColor(p.risk);
     html += `
@@ -1056,28 +1082,30 @@ function buildResults(p, ctx) {
       </div>`;
   }
 
-  // Intention (only if user provided context)
-  if (ctx && (ctx.objetivo || ctx.tono || ctx.enfado > 0)) {
+  const hasCtx = ctx && (ctx.objetivo || ctx.tono || ctx.enfado > 0 ||
+    (ctx.perfil && (ctx.perfil.nombre || ctx.perfil.estilo)));
+
+  if (hasCtx) {
+    const emojis = ['','😌','😕','😤','😠','🤬'];
     let chips = '';
-    if (ctx.objetivo) chips += `<div class="intent-chip">🎯 Querías <strong>${esc(ctx.objetivo)}</strong></div>`;
-    if (ctx.tono)     chips += `<div class="intent-chip">🗣️ Tono buscado: <strong>${esc(ctx.tono)}</strong></div>`;
-    if (ctx.enfado > 0) {
-      const emojis = ['','😌','😕','😤','😠','🤬'];
-      chips += `<div class="intent-chip">${emojis[ctx.enfado]} Nivel de enfado: <strong>${ctx.enfado}/5</strong></div>`;
-    }
+    if (ctx.objetivo)     chips += `<div class="intent-chip">🎯 Querías <strong>${esc(ctx.objetivo)}</strong></div>`;
+    if (ctx.tono)         chips += `<div class="intent-chip">🗣️ Tono: <strong>${esc(ctx.tono)}</strong></div>`;
+    if (ctx.enfado > 0)   chips += `<div class="intent-chip">${emojis[ctx.enfado]} Enfado: <strong>${ctx.enfado}/5</strong></div>`;
+    if (ctx.perfil?.nombre) chips += `<div class="intent-chip">👤 Pareja: <strong>${esc(ctx.perfil.nombre)}</strong></div>`;
+    if (ctx.perfil?.fase)   chips += `<div class="intent-chip">📍 Fase: <strong>${esc(ctx.perfil.fase)}</strong></div>`;
+
     html += `
       <div class="block intent-block">
         <div class="block-header">🎯 Tu intención declarada</div>
         <div class="block-body">
           <div class="intent-grid">${chips}</div>
           <p style="margin-top:10px;font-size:13px;color:var(--muted)">
-            El análisis tiene en cuenta este contexto para sugerirte las versiones más adecuadas.
+            El análisis tiene en cuenta este contexto para darte versiones más adecuadas.
           </p>
         </div>
       </div>`;
   }
 
-  // Phrases that escalate
   if (p.issues) {
     html += `
       <div class="block issues-block">
@@ -1086,7 +1114,6 @@ function buildResults(p, ctx) {
       </div>`;
   }
 
-  // How your partner will read it
   if (p.interp) {
     html += `
       <div class="block interp-block">
@@ -1095,7 +1122,6 @@ function buildResults(p, ctx) {
       </div>`;
   }
 
-  // Versions
   if (p.versions.length) {
     const vHtml = p.versions.map(v => `
       <div class="version-item">
@@ -1110,21 +1136,18 @@ function buildResults(p, ctx) {
       </div>`;
   }
 
-  // Fallback
   if (!p.risk && !p.issues && !p.interp && !p.versions.length) {
     html += `<div class="block"><div class="block-body">${esc(p.raw)}</div></div>`;
   }
 
   html += `<div class="saved-badge">✓ Te hemos ayudado a revisar antes de enviar</div>`;
-
-  // Why not ChatGPT
   html += `
     <div class="why-block">
       <div class="block-header">🤔 Por qué no es lo mismo que ChatGPT</div>
       <div class="why-grid">
         <div class="why-item"><div class="why-dot"></div>Analiza la intención real, no solo las palabras.</div>
         <div class="why-item"><div class="why-dot"></div>Detecta escalada emocional específica en contextos de pareja.</div>
-        <div class="why-item"><div class="why-dot"></div>Genera versiones calibradas a tu objetivo y tono, no respuestas genéricas.</div>
+        <div class="why-item"><div class="why-dot"></div>Genera versiones calibradas a tu objetivo, tono y perfil de pareja.</div>
         <div class="why-item"><div class="why-dot"></div>No necesitas saber hacer prompts. Tú escribes, la app interpreta.</div>
       </div>
     </div>`;
@@ -1145,13 +1168,10 @@ function animateMeter(risk) {
   if (el && risk != null) requestAnimationFrame(() => { el.style.width = risk + '%'; });
 }
 
-// Append disclaimer after results
 function appendDisclaimer() {
-  const existing = document.getElementById('disclaimer');
-  if (existing) return;
+  if (document.getElementById('disclaimer')) return;
   const el = document.createElement('p');
-  el.id = 'disclaimer';
-  el.className = 'disclaimer';
+  el.id = 'disclaimer'; el.className = 'disclaimer';
   el.textContent = 'AntiLiadas no sustituye una conversación real ni terapia de pareja. Solo te ayuda a revisar cómo puede sonar un mensaje antes de enviarlo.';
   document.getElementById('results').after(el);
 }
@@ -1162,57 +1182,47 @@ function riskColor(n) {
   if (n < 65) return '#fbbf24';
   return '#f87171';
 }
-
 function riskDescriptor(n) {
   if (n < 25) return 'Mensaje bastante seguro.<br>Puedes enviarlo.';
   if (n < 50) return 'Puede generar algo de fricción.<br>Considera las alternativas.';
   if (n < 75) return 'Probablemente cause conflicto.<br>Revisa las versiones.';
   return 'Riesgo muy alto.<br>No lo envíes sin revisar.';
 }
-
 function getMicrocopy(n) {
   if (n >= 75) return { cls: 'danger',  text: '🔥 Este mensaje probablemente habría acabado en discusión.' };
   if (n >= 50) return { cls: 'warning', text: '⚡ Con un pequeño cambio este mensaje cambia completamente de tono.' };
   return             { cls: 'safe',    text: '✓ Este mensaje es bastante seguro. Siempre hay margen de mejora.' };
 }
-
 function toBullets(raw) {
   const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
   const items = lines.map(l => l.replace(/^[-–•*]\s*/, '')).filter(l => l.length > 2);
   if (!items.length) return `<p>${esc(raw)}</p>`;
   return '<ul>' + items.map(i => `<li>${esc(i)}</li>`).join('') + '</ul>';
 }
-
 function esc(s) {
   return String(s)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 function escAttr(s) {
-  return String(s).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  return String(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
 // ── Copy ───────────────────────────────────────
 async function copyVersion(btn) {
   try {
     await navigator.clipboard.writeText(btn.dataset.text);
-    btn.textContent = '✓ Copiado';
-    btn.classList.add('copied');
+    btn.textContent = '✓ Copiado'; btn.classList.add('copied');
     setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 2000);
-  } catch {
-    toast('No se pudo copiar automáticamente');
-  }
+  } catch { toast('No se pudo copiar automáticamente'); }
 }
 
 // ── History ────────────────────────────────────
 function saveToHistory(msg, parsed, raw, ctx) {
   const entry = {
-    id:     Date.now(),
-    msg,
-    risk:   parsed.risk,
-    parsed: { ...parsed, raw },
-    ctx:    ctx || {},
-    ts:     new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+    id: Date.now(), msg, risk: parsed.risk,
+    parsed: { ...parsed, raw }, ctx: ctx || {},
+    ts: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
   };
   history.unshift(entry);
   if (history.length > 3) history = history.slice(0, 3);
@@ -1233,12 +1243,13 @@ function renderHistory() {
   listEl.innerHTML = history.map((h, idx) => {
     const color = riskColor(h.risk);
     const risk  = h.risk != null ? h.risk + '%' : '?';
+    const sub   = h.ctx?.objetivo ? ' · ' + h.ctx.objetivo : (h.ctx?.perfil?.nombre ? ' · ' + h.ctx.perfil.nombre : '');
     return `
       <div class="history-item" data-idx="${idx}" style="animation-delay:${idx * 0.06}s">
         <div class="h-risk-badge" style="background:${color}20;color:${color}">${risk}</div>
         <div class="h-content">
           <div class="h-msg">${esc(h.msg)}</div>
-          <div class="h-date">${h.ts}${h.ctx && h.ctx.objetivo ? ' · ' + h.ctx.objetivo : ''}</div>
+          <div class="h-date">${h.ts}${sub}</div>
         </div>
         <div class="h-chevron">›</div>
       </div>`;
@@ -1265,9 +1276,7 @@ function toggleHistory() {
 }
 
 // ── Paywall ────────────────────────────────────
-function showPaywall() {
-  document.getElementById('paywall').classList.add('visible');
-}
+function showPaywall() { document.getElementById('paywall').classList.add('visible'); }
 function simularPago() {
   document.getElementById('paywall').classList.remove('visible');
   toast('🚀 Próximamente — ¡Gracias por tu interés en Pro!');
@@ -1287,8 +1296,7 @@ function simularCompartir() {
 function toast(msg) {
   const wrap = document.getElementById('toasts');
   const el   = document.createElement('div');
-  el.className = 'toast';
-  el.textContent = msg;
+  el.className = 'toast'; el.textContent = msg;
   wrap.appendChild(el);
   setTimeout(() => el.remove(), 2600);
 }
