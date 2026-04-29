@@ -1004,13 +1004,14 @@ async function enviar() {
 
   try {
     const res = await fetch('https://antiliadas.onrender.com/analizar', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-  mensaje: mensajeEnviado,
-  perfil: obtenerPerfilPareja(),
-  modo: selectedModo
-})
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    mensaje: mensajeEnviado,
+    perfil: obtenerPerfilPareja(),
+    modo: selectedModo
+  })
+});
     });
 
     const data = await res.json();
@@ -1144,6 +1145,7 @@ function buildResults(p, ctx) {
 
     // Store explanation in a script tag so the onclick handler can read it without XSS risk
     const storeId = 'crisis-payload-' + Date.now();
+    const safeBtnId = 'crisis-safe-btn-' + Date.now();
 
     html += `
       <script type="application/json" id="${storeId}">${JSON.stringify(explanationBlocks)}<\/script>
@@ -1159,7 +1161,7 @@ function buildResults(p, ctx) {
             onclick="(function(btn){
               if (btn.dataset.revealed) return;
               btn.dataset.revealed = '1';
-              btn.textContent = 'Explicación mostrada ✓';
+              btn.textContent = 'Entendido ✓';
               btn.style.opacity = '0.5';
               btn.style.cursor = 'default';
               const payload = JSON.parse(document.getElementById('${storeId}').textContent);
@@ -1169,9 +1171,12 @@ function buildResults(p, ctx) {
               wrapper.innerHTML = payload;
               anchor.insertAdjacentElement('afterend', wrapper);
               wrapper.scrollIntoView({ behavior:'smooth', block:'nearest' });
+              const safeBtn = document.getElementById('${safeBtnId}');
+              if (safeBtn) { safeBtn.disabled = false; safeBtn.style.opacity = '1'; safeBtn.style.cursor = 'pointer'; }
             })(this)">Ver por qué</button>
-          ${p.recomendado ? `<button class="btn" onclick="mostrarMensajeSeguro()"
-            style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#000;">Ver mensaje seguro</button>` : ''}
+          ${p.recomendado ? `<button class="btn" id="${safeBtnId}" onclick="mostrarMensajeSeguro()"
+            style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#000;"
+            disabled>Ver mensaje seguro</button>` : ''}
         </div>
       </div>`;
 
