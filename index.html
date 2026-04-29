@@ -102,7 +102,11 @@
     letter-spacing: 0; font-size: 11px; margin-left: 5px;
     color: var(--muted);
   }
-
+<div class="field-label">¿Qué necesitas ahora?</div>
+<div class="pills" id="pills-modo">
+  <button type="button" class="pill active" onclick="setModo('enviar', this)">Quiero enviar un mensaje</button>
+  <button type="button" class="pill" onclick="setModo('decodificar', this)">Quiero entender lo que me han enviado</button>
+</div>
   /* ── Context section (objetivo / tono / enfado) ─ */
   .context-section {
     border-bottom: 1px solid var(--border);
@@ -844,7 +848,29 @@ function updateEnfado(val) {
   const label = document.querySelector('.input-label');
   const ta = document.getElementById('msg');
   const loaderMsg = document.querySelector('.loader-msg');
+function setModo(modo, btn) {
+  selectedModo = modo;
 
+  document.querySelectorAll('#pills-modo .pill').forEach(b => {
+    b.classList.remove('active');
+  });
+
+  btn.classList.add('active');
+
+  const label = document.querySelector('.input-label');
+  const ta = document.getElementById('msg');
+  const loaderMsg = document.querySelector('.loader-msg');
+
+  if (modo === 'decodificar') {
+    label.textContent = 'Mensaje que te han enviado';
+    ta.placeholder = 'Ej: Vale, haz lo que quieras. Ya hablaremos cuando se pueda.';
+    loaderMsg.innerHTML = 'Analizando qué puede significar y qué no deberías asumir todavía<span class="loader-dots"><span>.</span><span>.</span><span>.</span></span>';
+  } else {
+    label.textContent = 'Tu mensaje';
+    ta.placeholder = PLACEHOLDERS[Math.floor(Math.random() * PLACEHOLDERS.length)];
+    loaderMsg.innerHTML = 'Revisando tono, intención y posibles malentendidos<span class="loader-dots"><span>.</span><span>.</span><span>.</span></span>';
+  }
+}
   if (selectedModo === 'decodificar') {
     label.textContent = 'Mensaje que te han enviado';
     ta.placeholder = 'Ej: Vale, haz lo que quieras. Ya hablaremos cuando se pueda.';
@@ -922,6 +948,13 @@ function toggleProfile() {
 // ── Context prefix (injected into mensaje) ─────
 function buildContexto() {
   const parts = [];
+  if (selectedModo === 'decodificar') {
+  parts.push('Modo de análisis: el usuario quiere entender un mensaje recibido, no enviar uno');
+  parts.push('Instrucción clave: no alimentar paranoia, no inventar certezas, explicar posibilidades y dar una recomendación clara');
+} else {
+  parts.push('Modo de análisis: el usuario quiere enviar un mensaje sin generar conflicto');
+  parts.push('Instrucción clave: detectar riesgo de conflicto y proponer una versión mejor para enviar');
+}
   if (selectedModo === 'decodificar') {
   parts.push(`Modo de análisis: el usuario quiere entender un mensaje recibido, no enviar uno`);
   parts.push(`Instrucción clave: no alimentar paranoia, no inventar certezas, explicar posibilidades y dar una recomendación clara`);
