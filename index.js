@@ -55,8 +55,40 @@ No manipules. No prometas salvar relaciones. Ayuda a expresar mejor el mensaje.
 
 Mensaje:
 "${mensaje}"
+
 Contexto adicional:
 ${contextoPareja}
+
+Reglas importantes:
+- Usa el nombre de la otra persona si está disponible.
+- Adapta el análisis a su estilo de comunicación.
+- No respondas como una IA genérica.
+- Valida primero la emoción del usuario en una frase breve.
+- Si el mensaje puede empeorar la situación, dilo claramente.
+- Incluye una frase tipo: "Probable reacción de [nombre]: ..."
+- Da SOLO un mensaje recomendado, no tres versiones principales.
+
+Responde EXACTAMENTE en este formato:
+
+💬 Validación:
+[1 frase breve validando lo que puede estar sintiendo el usuario]
+
+🧠 Qué está pasando realmente:
+[2-3 líneas claras, humanas y sin tecnicismos]
+
+👀 Cómo puede recibirlo [nombre]:
+[explicación breve adaptada al perfil]
+
+⛔ ¿Conviene enviarlo ahora?
+[sí / no / mejor esperar, con una razón breve]
+
+✅ Mensaje recomendado:
+"[mensaje listo para copiar]"
+
+🔮 Probable reacción de [nombre]:
+[2-3 líneas realistas]
+`;
+
 Reglas importantes:
 - Usa el nombre de la otra persona si está disponible.
 - Adapta el análisis a su estilo de comunicación.
