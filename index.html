@@ -998,7 +998,10 @@ function updateCounter() {
 
 // ── Analyze ────────────────────────────────────
 async function enviar() {
-  if (usos >= MAX) { showPaywall(); return; }
+  if (usos >= MAX) { 
+    showPaywall(); 
+    return; 
+  }
 
   const btn       = document.getElementById('btn');
   const loader    = document.getElementById('loader');
@@ -1009,61 +1012,61 @@ async function enviar() {
 
   const mensajeEnviado = buildContexto() + rawMsg;
 
-if (data.error) {
-  resultsEl.innerHTML = buildErrorBlock(data.error);
-} else {
-  usos++;
-  localStorage.setItem('al_usos', String(usos));
-  updateCounter();
-
-  const parsed = parseResult(data.resultado);
-  saveToHistory(rawMsg, parsed, data.resultado, ctx);
-  resultsEl.innerHTML = buildResults(parsed, ctx);
-  setTimeout(() => animateMeter(parsed.risk), 80);
-  resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  toast('✓ Análisis guardado en tu historial');
-  if (usos >= MAX) setTimeout(showPaywall, 3200);
-}
-
   btn.disabled = true;
   resultsEl.innerHTML = '';
   loader.classList.add('visible');
   loader.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-const ctx = {
-  modo:     selectedModo,
-  objetivo: selectedObjetivo,
-  tono:     selectedTono,
-  enfado:   enfadoNivel,
-  perfil:   obtenerPerfilPareja()
-};
+  const ctx = {
+    modo:     typeof selectedModo !== 'undefined' ? selectedModo : 'enviar',
+    objetivo: selectedObjetivo,
+    tono:     selectedTono,
+    enfado:   enfadoNivel,
+    perfil:   obtenerPerfilPareja()
+  };
 
   try {
-    const res  = await fetch('https://antiliadas.onrender.com/analizar', {
+    const res = await fetch('https://antiliadas.onrender.com/analizar', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ mensaje: mensajeEnviado })
+      body:    JSON.stringify({ 
+        mensaje: mensajeEnviado,
+        perfil: obtenerPerfilPareja()
+      })
     });
+
     const data = await res.json();
+
     loader.classList.remove('visible');
 
-    if (data.error) {
-      resultsEl.innerHTML = buildErrorBlock(data.error);
-    } else {
-      const parsed = parseResult(data.resultado);
-      saveToHistory(rawMsg, parsed, data.resultado, ctx);
-      resultsEl.innerHTML = buildResults(parsed, ctx);
-      setTimeout(() => animateMeter(parsed.risk), 80);
-      resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      toast('✓ Análisis guardado en tu historial');
-      if (usos >= MAX) setTimeout(showPaywall, 3200);
+    if (!res.ok || data.error) {
+      resultsEl.innerHTML = buildErrorBlock(data.error || 'No se pudo analizar el mensaje.');
+      return;
     }
 
-  } catch {
+    usos++;
+    localStorage.setItem('al_usos', String(usos));
+    updateCounter();
+
+    const parsed = parseResult(data.resultado);
+    saveToHistory(rawMsg, parsed, data.resultado, ctx);
+    resultsEl.innerHTML = buildResults(parsed, ctx);
+
+    setTimeout(() => animateMeter(parsed.risk), 80);
+    resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    toast('✓ Análisis guardado en tu historial');
+
+    if (usos >= MAX) {
+      setTimeout(showPaywall, 3200);
+    }
+
+  } catch (error) {
     loader.classList.remove('visible');
     resultsEl.innerHTML = buildErrorBlock(
       'No se pudo conectar con el servidor. ¿Está corriendo el backend?'
     );
+    console.error(error);
+
   } finally {
     btn.disabled = document.getElementById('msg').value.trim().length === 0;
   }
